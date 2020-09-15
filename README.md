@@ -1,2 +1,2 @@
-# origin
-there is nothing interesting
+# 3sem
+my labs on c++
