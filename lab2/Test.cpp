@@ -38,6 +38,8 @@ TEST(Lemnmethods, Parametrs){
 	ASSERT_NEAR(sqrt(2)*2.5*sqrt(cos(0.4)), a1.Rasst(0.2), err);
 	ASSERT_NEAR(sqrt(2)/(3*sqrt(cos(0.4))), a1.Rad1(0.2), err);
 	ASSERT_NEAR(0.8333, a1.Rad2(2), err);
+	ASSERT_EQ(12.5, a1.area());
+	ASSERT_NEAR(6.25*sin(0.4)/2, a1.Ssect(0.2), err);
 }
 
 	int main(int argc, char* argv[])
