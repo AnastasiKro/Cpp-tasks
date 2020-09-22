@@ -50,7 +50,7 @@ namespace Prog2{
 		return *this;
 	}
 	char* Lemn::frm()const{
-		char* s1 ="(x^2 + y^2)^2 = 2*  (x^2 - y^2)";
+		const char* s1 ="(x^2 + y^2)^2 = 2*  (x^2 - y^2)";
 		int l = strlen(s1);
 		char* buf = new char[20];
 		sprintf(buf, "%.2f", c);
