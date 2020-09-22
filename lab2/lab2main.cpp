@@ -58,7 +58,6 @@ int main(int argc, char* argv[]){
 			cout << "Введите угол в радинах"<<endl;
 			Prog2::getNum(n);
 			double r = L.Ssect(n);
-			if (n!=-1)
 				cout << "Площадь сектора: "<< r<<endl;
 
 		}

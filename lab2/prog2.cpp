@@ -64,22 +64,18 @@ namespace Prog2{
 		return s;
 	}
 	double Lemn::Rasst(double a)const {
-		if (a> -3.141592/4&&a<3.141592/4)
-		{
-			double R=sqrt(2)*c*sqrt(cos(2*a));
+			double R=sqrt(2)*c*sqrt(abs(cos(2*a)));
 			return R;
-		}
-			return 0;
-		double R=sqrt(2)*c*sqrt(cos(2*a));
-		return R;
 	}
 	double Lemn::Rad1(double a)const{
-		if (a> -3.141592/4&&a<3.141592/4)
-			return sqrt(2)/(3*sqrt(cos(2*a)));
-		return 0;
+		if(c==0)
+			return 0;
+		if(cos(2*a)==0)
+			return 0;
+			return sqrt(2)/(3*sqrt(abs(cos(2*a))));
 	}
 	double Lemn::Rad2(double d)const{
-		if (d<=0){
+		if (d<=0 || d>c*sqrt(2)){
 			cout<<"illegal d"<<endl;
 			return 0;
 		}
@@ -87,12 +83,10 @@ namespace Prog2{
 		return (2*c)/(3*d);
 	}
 	double Lemn::Ssect(double a)const{
-		if (a> -3.141592/4&&a<3.141592/4)
-			return (c*c*sin(2*a))/2;
-		else{
-			cout<<"wrong angle, you need [-pi/4; pi/4]"<< endl;
-			return -1;
+		while(a-2*3.141592>=0){
+			a=a-2*3.141592;
 		}
+			return (c*c*abs(sin(2*a)))/2;
 	}
 }
 
