@@ -1,4 +1,7 @@
+#ifndef LAB2_H
+#define LAB2_H
 #include <iostream>
+#include "gtest/gtest_prod.h"
 using namespace std;
 namespace Prog2{
 	struct Point{
@@ -13,14 +16,16 @@ namespace Prog2{
 			Lemn();
 			Lemn(Point f1);
 			Lemn(Point f1, Point f2);
-			Point getP1();
-			Point getP2();
-			double Rasst(double a);
-			double Rad1(double a);// const { return sqrt(2)/(3*sqrt(cos(2*a)));}
-			double Rad2(double a);
-			double Ssect(double a);//const { return c*c/	
+			Point getP1()const {return F1;}
+			Point getP2()const {return F2;}
+			Lemn& set1f(Point f1);
+			Lemn& set2f(Point f1, Point f2);
+			double Rasst (double a) const;
+			double Rad1(double a)const;// const { return sqrt(2)/(3*sqrt(cos(2*a)));}
+			double Rad2(double a)const;
+			double Ssect(double a)const;//const { return c*c/	
 			double area() const{ return c*c*2; }
-			char* frm();
+			char* frm()const;
 	};
 	template <class T>
 	int getNum(T &a){
@@ -38,5 +43,4 @@ namespace Prog2{
 		return 0;
 	}	
 }
-
-			
+#endif		

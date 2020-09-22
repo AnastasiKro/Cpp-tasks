@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char* argv[]){
 	int flag = 0;
 	double n;
 	Prog2::Lemn L;
@@ -20,22 +20,19 @@ int main(){
 		if (flag == 1){
 			cout<<"Если хотите ввести координаты F1, введите 1, если F1 и F2, то введите 2" <<endl;
 			Prog2::getNum(n);
+			if (n==1 || n==2){
 			Prog2::Point f1;
 			Prog2::getNum(f1.x);
 			Prog2::getNum(f1.y);
 			if (n==1){
-				Prog2::Lemn l(f1);
-				L=l;
+				L.set1f(f1);
 			}
 			if(n==2){
 				Prog2::Point f2;
 				Prog2::getNum(f2.x);
 				Prog2::getNum(f2.y);
-				Prog2::Lemn l(f1, f2);
-				L=l;
-			}
-			
-
+				L.set2f(f1, f2);
+			}}
 		}
 		if (flag ==2){
 			cout << "Введите угол в радинах"<<endl;
