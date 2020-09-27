@@ -1,5 +1,6 @@
 #include <iostream>
 #include "lab2.h"
+#include <sstream>
 
 using namespace std;
 

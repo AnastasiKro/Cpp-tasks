@@ -1,6 +1,7 @@
 #ifndef LAB2_H
 #define LAB2_H
 #include <iostream>
+#include <sstream>
 #include "gtest/gtest_prod.h"
 using namespace std;
 namespace Prog2{
@@ -25,7 +26,7 @@ namespace Prog2{
 			double Rad2(double a)const;
 			double Ssect(double a)const;//const { return c*c/	
 			double area() const{ return c*c*2; }
-			char* frm()const;
+			string frm()const;
 	};
 	template <class T>
 	int getNum(T &a){
