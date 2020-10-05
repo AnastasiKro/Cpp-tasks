@@ -20,16 +20,12 @@ namespace Prog3{
 		for (int i = 0; i<n; i++){
 			Dice dice;
 			int p = findDice(dice.a, dice.b);
-			std::cout<<"p "<< p<<std::endl;
 			while (p != -1){
 				dice.a=(dice.a+1)%7;
 				dice.b = (dice.b+rand())%7;
 				p = findDice(dice.a, dice.b);
 			}
 			SetAdd(dice);
-			//Dice d;
-			//*this++;
-			//SetAdd(d);
 		}
 	}
 	Domino::Domino(int n, Dice dices[]){
@@ -68,7 +64,6 @@ namespace Prog3{
 		}
 		catch(const std::exception &e){
 			std::cout << "Exception!"<<std::endl;
-		//	return 0;
 		}
 		return in;
 	}
@@ -128,7 +123,6 @@ namespace Prog3{
 		}
 		
 		Domino Do(n, dices);
-		std::cout << n;
 		std::cout<<Do;
 		Domino* D = &Do;
 		return D;
