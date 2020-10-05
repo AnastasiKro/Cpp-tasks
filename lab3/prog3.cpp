@@ -16,8 +16,8 @@ namespace Prog3{
 		N=1;
 	}
 	Domino::Domino(int n){
-		N=1;
-		for (int i = 1; i<n; i++){
+		N=0;
+		for (int i = 0; i<n; i++){
 			Dice dice;
 			int p = findDice(dice.a, dice.b);
 			std::cout<<"p "<< p<<std::endl;
