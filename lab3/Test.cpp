@@ -21,6 +21,9 @@ TEST(Domino_operators, exceptions){
 	ASSERT_NO_THROW(d1[D]);
 	ASSERT_NO_THROW(d1.DomSort());
 	ASSERT_NO_THROW(d1.pdgr(3));
+	Dice d(1, 0);
+	ASSERT_EQ(1, d1.getA(d1.getN()));
+	ASSERT_EQ(0, d1.getB(d1.getN()));
 }
 
 	int main(int argc, char* argv[])
