@@ -30,12 +30,11 @@ namespace Prog3{
 		public:
 			Domino();
 			Domino(int n);
-			Domino(int n, Dice* dices);
+			Domino(int n, Dice dices[]);
 			Domino& SetAdd(Dice dice);
-			int del(){
-				delete this;
-				return 0;
-			}
+			int getA(int k) const {return DD[k].a; }
+			int getB(int k) const {return DD[k].b; }
+			int getN() const {return N;}
 			//~Domino();
 			friend std::ostream & operator << (std::ostream& out, Domino& Dom);
 			int findDice(int a1, int b1);
@@ -44,7 +43,7 @@ namespace Prog3{
 			Domino & operator ++(int a);
 			Domino* operator [](Domino* D);
 			Domino & DomSort();
-			Domino* pdgr();
+			Domino* pdgr(int k);
 
 	};
 }

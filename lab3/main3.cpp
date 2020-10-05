@@ -38,8 +38,10 @@ int main(int argc, char* argv[]){
 			Dom.DomSort();
 		}
 		if (flag == 6){
-			Domino* D = Dom.pdgr();
-			std::cout << *D;
+			std::cout<<"Input the number"<<std::endl;
+			int k; getNum(k);
+			Domino* D = Dom.pdgr(k);
+			//std::cout << *D;
 		}
 		
 		if (flag == 7){

@@ -32,7 +32,7 @@ namespace Prog3{
 			//SetAdd(d);
 		}
 	}
-	Domino::Domino(int n, Dice* dices){
+	Domino::Domino(int n, Dice dices[]){
 		N=0;
 		for(int i = 0; i<n; i++){
 			SetAdd(dices[i]);
@@ -43,6 +43,7 @@ namespace Prog3{
 		N+=1;
 		return *this;
 	}
+	
 	int Domino::findDice(int a1, int b1){
 		for (int i =0; i<N; i++){
 			if ((DD[i].a==a1 && DD[i].b==b1)||(DD[i].a==b1 && DD[i].b==a1))
@@ -114,9 +115,9 @@ namespace Prog3{
 		}
 		return *this;
 	}
-	Domino* Domino::pdgr(){
-		std::cout<<"Input the number"<<std::endl;
-		int k; getNum(k);
+	Domino* Domino::pdgr(int k){
+		//std::cout<<"Input the number"<<std::endl;
+		//int k; getNum(k);
 		Dice* dices = new Dice[N];
 		int n =0;
 		for(int i = 0; i<N; i++){
@@ -125,7 +126,10 @@ namespace Prog3{
 				n+=1;
 			}
 		}
+		
 		Domino Do(n, dices);
+		std::cout << n;
+		std::cout<<Do;
 		Domino* D = &Do;
 		return D;
 	}
