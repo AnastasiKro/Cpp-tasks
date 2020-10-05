@@ -9,7 +9,7 @@ namespace Prog3{
 			if (!std::cin.good()){
 				std::cin.clear();
 				std::cin.ignore();
-				std::cout << "There shold be a digit, try again" <<std::endl;
+				//std::cout << "There shold be a digit, try again" <<std::endl;
 			} else
 				b = 1;
 		}while(b==0);
@@ -18,13 +18,10 @@ namespace Prog3{
 	struct Dice{
 		int a;
 		int b;
-		Dice(){
-			a=rand()%7;
-			b=rand()%7;
-		}
-		Dice(int a1, int b1){
-			a=a1; b= b1; }
-		~Dice();
+		Dice();
+		Dice(int a1, int b1);
+		friend std::istream & operator >> (std::istream& in, Dice& dice);
+		//~Dice();
 	};
 	class Domino{
 		private:
@@ -33,18 +30,21 @@ namespace Prog3{
 		public:
 			Domino();
 			Domino(int n);
+			Domino(int n, Dice* dices);
 			Domino& SetAdd(Dice dice);
 			int del(){
 				delete this;
 				return 0;
 			}
-			~Domino();
-			//friend std::ostream & operator << ();
-			friend std::istream & operator >> (std::istream in, Dice& dice);
+			//~Domino();
+			friend std::ostream & operator << (std::ostream& out, Domino& Dom);
+			int findDice(int a1, int b1);
+			//friend std::istream & operator >> (std::istream& in, Dice& dice);
 			Domino & operator -= (const Dice &dice);
-			Domino & operator ++();
-			Dice &operator [](int k);
-			//Domino & pdgr(int k);
+			Domino & operator ++(int a);
+			Domino* operator [](Domino* D);
+			Domino & DomSort();
+			Domino* pdgr();
 
 	};
 }

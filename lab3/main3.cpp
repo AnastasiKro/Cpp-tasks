@@ -6,33 +6,45 @@ int main(int argc, char* argv[]){
 	Domino Dom;
 	do {
 		std::cout << "Input 0 to leave " << std::endl;
-		std::cout << "1 to create Domino of n elements "<<std::endl;
-		std::cout <<"2 add new dice with random numbers"<<std::endl;
-		std::cout <<"3 add new dice with your numbers"<< std::endl;
-		std::cout <<"4 delete the dice"<<std::endl;
-		std::cout<< "5 to open the dice"<<std::endl;
-		std::cout<<"6 to sort the dice"<<std::endl;
+		//std::cout << "1 to create Domino of n elements "<<std::endl;
+		std::cout <<"1 add new dice with random numbers"<<std::endl;
+		std::cout <<"2 add new dice with your numbers"<< std::endl;
+		std::cout <<"3 delete the dice"<<std::endl;
+		std::cout<< "4 to open the dice"<<std::endl;
+		std::cout<<"5 to sort the dice"<<std::endl;
+		std::cout<<"6 to create subgrope of the dices with the number k"<<std::endl;
+		std::cout<<"7 to print all the Domino"<<std::endl;
 		getNum(flag);
-		if (flag ==1){
-			Dom.~Domino();
-			//Dom.del();
-			int n;
-			getNum(n);
-			Domino Dom(n);
-		}
-		if (flag==2){
+		if (flag==1){
 			Dom++;
 		}
-		if (flag==3){
+		if (flag==2){
 			Dice dice;
 			std::cin>>dice;
+			Dom.SetAdd(dice);
 		}
-		if (flag == 4){
+		if (flag == 3){
 			Dice dice;
-			std::cin>>dice;
+			std::cin >> dice;
 			Dom-=dice; 
 		}
-		//if (flag == 5){
+		if (flag == 4){
+			Domino* D;
+			D =Dom[D];
+			if (D!=nullptr)
+				std::cout<<*D;
+		}
+		if (flag == 5){
+			Dom.DomSort();
+		}
+		if (flag == 6){
+			Domino* D = Dom.pdgr();
+			std::cout << *D;
+		}
+		
+		if (flag == 7){
+			std::cout << Dom;
+		}
 			
 
 	}while(flag!=0);

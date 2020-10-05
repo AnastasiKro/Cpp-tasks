@@ -2,20 +2,40 @@
 #include "lab3.h"
 
 namespace Prog3{
+	Dice::Dice(){
+		a=rand()%7;
+		b=rand()%7;
+	}
+	Dice::Dice(int a1, int b1){
+		a=a1;
+		b=b1;
+	}
 	Domino::Domino(){
 		Dice d;
 		DD[0]=d;
 		N=1;
 	}
 	Domino::Domino(int n){
+		N=1;
+		for (int i = 1; i<n; i++){
+			Dice dice;
+			int p = findDice(dice.a, dice.b);
+			std::cout<<"p "<< p<<std::endl;
+			while (p != -1){
+				dice.a=(dice.a+1)%7;
+				dice.b = (dice.b+rand())%7;
+				p = findDice(dice.a, dice.b);
+			}
+			SetAdd(dice);
+			//Dice d;
+			//*this++;
+			//SetAdd(d);
+		}
+	}
+	Domino::Domino(int n, Dice* dices){
 		N=0;
-		for (int i = 0; i<n; i++){
-			int a1= rand()%7;
-			int b1= rand()%7;
-			Dice d(a1, b1);
-			SetAdd(d);
-			//DD[i] = d;
-			//N+=1;
+		for(int i = 0; i<n; i++){
+			SetAdd(dices[i]);
 		}
 	}
 	Domino& Domino::SetAdd(Dice dice){
@@ -23,54 +43,91 @@ namespace Prog3{
 		N+=1;
 		return *this;
 	}
-		
-	/*std::ostream& Domino::operator<<(std::ostream& out, Domino& DD){
-		out<<;
+	int Domino::findDice(int a1, int b1){
+		for (int i =0; i<N; i++){
+			if ((DD[i].a==a1 && DD[i].b==b1)||(DD[i].a==b1 && DD[i].b==a1))
+				return i;
+		}
+		return -1;
+	}
+
+	std::ostream& operator<<(std::ostream& out, Domino& Dom){
+		for (int i = 0; i<Dom.N;i++){
+			std::cout<<"   ________"<<std::endl;
+			out<<i+1<<".| "<<Dom.DD[i].a<<" | "<<Dom.DD[i].b<<" |"<<std::endl;		
+			std::cout<<"   --------"<<std::endl;
+		}
 		return out;
-	}*/
-	std::istream& operator >>(std::istream &in, Dice &dice){
+	}
+	std::istream& operator >> (std::istream &in, Dice& dice){
 		std::cout << "Введите 2 числа на кости"<< std::endl;
-		//try{
-		in>> dice.a;
-		in>>dice.b;
-		/*}
+		try{
+		in >> dice.a;
+		in >> dice.b;
+		}
 		catch(const std::exception &e){
 			std::cout << "Exception!"<<std::endl;
-			return 0;
-		}*/
+		//	return 0;
+		}
 		return in;
 	}
-	Domino& Domino::operator ++(){
+	Domino& Domino::operator ++(int a){
 		Dice dice;
-		for (int i = 0; i<N; i++){
-			if ((DD[i].a==dice.a && DD[i].b==dice.b)||(DD[i].a==dice.b && DD[i].b == dice.a)){
-				//cout<< "Такая кость уже существует!"<<endl;
-				//return DD;
+		int p = findDice(dice.a, dice.b);
+		while (p != -1){
 				dice.a=(dice.a+1)%7;
 				dice.b = (dice.b+rand())%7;
-				i = 0;
+				p = findDice(dice.a, dice.b);
 			}
-		}
 		SetAdd(dice);
-		//DD[N]=dice;
-		//N+=1;
 		return *this;
 	}
 	Domino& Domino::operator -=(const Dice& dice){
-		//Dice dice;
-		//std::cin>>dice;
-		for (int i = 0; i<N; i++){
-			if ((DD[i].a==dice.a && DD[i].b==dice.b)||(DD[i].a==dice.b && DD[i].b == dice.a)){
-				DD[i]=DD[N-1];
-				N-=1;
-				break;
+		int p = findDice(dice.a, dice.b);
+		if (p == -1){
+			std::cout<<"There is no such dice"<<std::endl;
+			return *this;
+		}
+		DD[p]=DD[N-1];
+		N-=1;
+		return *this;
+	}
+	Domino* Domino::operator [](Domino* D){
+		std::cout<<"Input number of the dice"<<std::endl;
+		int k; getNum(k);
+		if (k>N||k<1)
+			return nullptr;
+		Domino Do(1, DD+k-1);
+		D=&Do;
+		//Dice dice(DD[k].a, DD[k].b);
+		return D;
+	}
+	Domino& Domino::DomSort(){
+		for (int i = 0; i<N-1; i++){
+			for( int j = 0; j<N-1; j++){
+				if (DD[j].a+DD[j].b>DD[j+1].a+DD[j+1].b){
+					Dice D = DD[j];
+					DD[j]=DD[j+1];
+					DD[j+1]=D;
+				}
 			}
 		}
 		return *this;
 	}
-	Dice& Domino::operator [](int k){
-		Dice dice(DD[k].a, DD[k].b);
-		return dice;
+	Domino* Domino::pdgr(){
+		std::cout<<"Input the number"<<std::endl;
+		int k; getNum(k);
+		Dice* dices = new Dice[N];
+		int n =0;
+		for(int i = 0; i<N; i++){
+			if (DD[i].a == k || DD[i].b == k){
+				dices[n]=DD[i];
+				n+=1;
+			}
+		}
+		Domino Do(n, dices);
+		Domino* D = &Do;
+		return D;
 	}
 }
 		
