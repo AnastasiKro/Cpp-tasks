@@ -41,7 +41,7 @@ namespace Prog3{
 			//friend std::istream & operator >> (std::istream& in, Dice& dice);
 			Domino & operator -= (const Dice &dice);
 			Domino & operator ++(int a);
-			Domino* operator [](Domino* D);
+			int operator [](int k);
 			Domino & DomSort();
 			Domino* pdgr(int k);
 

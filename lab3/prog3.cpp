@@ -57,7 +57,7 @@ namespace Prog3{
 		return out;
 	}
 	std::istream& operator >> (std::istream &in, Dice& dice){
-		std::cout << "Введите 2 числа на кости"<< std::endl;
+		std::cout << "input two numbers on the dice"<< std::endl;
 		try{
 		in >> dice.a;
 		in >> dice.b;
@@ -88,15 +88,13 @@ namespace Prog3{
 		N-=1;
 		return *this;
 	}
-	Domino* Domino::operator [](Domino* D){
-		std::cout<<"Input number of the dice"<<std::endl;
-		int k; getNum(k);
+	int Domino::operator [](int k){
 		if (k>N||k<1)
-			return nullptr;
+			return 0;
 		Domino Do(1, DD+k-1);
-		D=&Do;
+		std::cout<<Do;
 		//Dice dice(DD[k].a, DD[k].b);
-		return D;
+		return 1;
 	}
 	Domino& Domino::DomSort(){
 		for (int i = 0; i<N-1; i++){
