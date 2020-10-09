@@ -1,6 +1,7 @@
 #include <iostream>
 
 namespace Prog3{
+	void print_menu();
 	template <class T>
 	int getNum(T &a){
 		int b = 0;
@@ -52,6 +53,8 @@ namespace Prog3{
 
 	};
 	void pdgr(const Domino& Dom, int k);
+	void Subgroup(const Domino& Dom);
+	void OpenDice(Domino& Dom);
 }
 
 		
