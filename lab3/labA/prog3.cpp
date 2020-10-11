@@ -34,6 +34,13 @@ namespace Prog3{
 			SetAdd(dices[i]);
 		}
 	}
+	Domino& Domino::SetDD(int n,Dice dices[]){
+		N=n;
+		for(int i = 0; i<n; i++){
+			DD[i]=dices[i];
+		}
+		return *this;
+	}
 	Domino& Domino::SetAdd(Dice dice){
 		DD[N]=dice;
 		N+=1;
@@ -108,7 +115,7 @@ namespace Prog3{
 		}
 		return *this;
 	}
-	Domino* Domino::pdgr(int k){
+	Domino& Domino::pdgr(Domino& Do, int k){
 		//std::cout<<"Input the number"<<std::endl;
 		//int k; getNum(k);
 		Dice* dices = new Dice[N];
@@ -119,11 +126,11 @@ namespace Prog3{
 				n+=1;
 			}
 		}
-		
-		Domino Do(n, dices);
+		Do.SetDD(n, dices);
+		//Domino Do(n, dices);
 		std::cout<<Do;
-		Domino* D = &Do;
-		return D;
+		
+		return Do;
 	}
 }
 		

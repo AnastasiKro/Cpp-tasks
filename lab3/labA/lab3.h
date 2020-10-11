@@ -32,6 +32,7 @@ namespace Prog3{
 			Domino(int n);
 			Domino(int n, Dice dices[]);
 			Domino& SetAdd(Dice dice);
+			Domino& SetDD(int n, Dice dices[]);
 			int getA(int k) const {return DD[k].a; }
 			int getB(int k) const {return DD[k].b; }
 			int getN() const {return N;}
@@ -43,7 +44,7 @@ namespace Prog3{
 			Domino & operator ++(int a);
 			int operator [](int k);
 			Domino & DomSort();
-			Domino* pdgr(int k);
+			Domino& pdgr(Domino& Do, int k);
 
 	};
 }
