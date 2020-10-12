@@ -16,6 +16,12 @@ namespace Prog3{
 		DD[0]=d;
 		N=1;
 	}
+	Domino& Domino::SetDD(int n, Dice dices[]){
+		N=n;
+		for (int i = 0; i<n; i++)
+			DD[i]=dices[i];
+		return *this;
+	}
 	Domino::Domino(int n){
 		DD= new Dice[n];
 		N=0;
@@ -108,13 +114,10 @@ namespace Prog3{
 		N-=1;
 		return *this;
 	}
-	int Domino::operator [](int k){
+	Dice& Domino::operator [](int k){
 		if (k>N||k<1)
-			return 0;
-		Domino Do(1, DD+k-1);
-		std::cout<<Do;
-		//Dice dice(DD[k].a, DD[k].b);
-		return 1;
+			throw std::invalid_argument("invalid k!");
+		return DD[k-1];
 	}
 	Domino& Domino::operator =(Domino& Dom){
 		
@@ -156,6 +159,7 @@ namespace Prog3{
 		if (n>0){
 		Domino Do(n, dices);
 		std::cout<<Do;
+		delete[] dices;
 		}
 	}
 }

@@ -34,6 +34,7 @@ namespace Prog3{
 			Domino(int n, Dice dices[]);
 			Domino(const Domino& Dom);
 			Domino& SetAdd(Dice dice);
+			Domino& SetDD(int n, Dice dices[]);
 			int getA(int k) const {return DD[k].a; }
 			int getB(int k) const {return DD[k].b; }
 			int getN() const {return N;}
@@ -46,7 +47,7 @@ namespace Prog3{
 			//friend std::istream & operator >> (std::istream& in, Dice& dice);
 			Domino & operator -= (const Dice &dice);
 			Domino & operator ++(int a);
-			int operator [](int k);
+			Dice& operator [](int k);
 			Domino& operator =( Domino& Dom);
 			Domino & DomSort();
 			//void pdgr(int k)const;

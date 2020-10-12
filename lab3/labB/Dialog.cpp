@@ -17,8 +17,10 @@ void print_menu(){
 void OpenDice( Domino &Dom){	
 		std::cout<<"Input number of the dice"<<std::endl;
 		int k; getNum(k);
-		//Domino* D;
-		Dom[k];
+		Dice d=Dom[k];
+		Domino Do;
+		Do.SetDD(1, &d);
+		std::cout<<Do;
 }
 void Subgroup(const Domino &Dom){
 		std::cout<<"Input the number"<<std::endl;

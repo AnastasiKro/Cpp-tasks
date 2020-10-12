@@ -42,7 +42,7 @@ namespace Prog3{
 			//friend std::istream & operator >> (std::istream& in, Dice& dice);
 			Domino & operator -= (const Dice &dice);
 			Domino & operator ++(int a);
-			int operator [](int k);
+			Dice& operator []( int k);
 			Domino & DomSort();
 			Domino& pdgr(Domino& Do, int k);
 

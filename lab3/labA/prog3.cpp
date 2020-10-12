@@ -88,20 +88,15 @@ namespace Prog3{
 	Domino& Domino::operator -=(const Dice& dice){
 		int p = findDice(dice.a, dice.b);
 		if (p == -1){
-			std::cout<<"There is no such dice"<<std::endl;
-			return *this;
+			throw std::invalid_argument("Invalid value");
+			//return *this;
 		}
 		DD[p]=DD[N-1];
 		N-=1;
 		return *this;
 	}
-	int Domino::operator [](int k){
-		if (k>N||k<1)
-			return 0;
-		Domino Do(1, DD+k-1);
-		std::cout<<Do;
-		//Dice dice(DD[k].a, DD[k].b);
-		return 1;
+	Dice& Domino::operator []( int k){
+		return DD[k+1];
 	}
 	Domino& Domino::DomSort(){
 		for (int i = 0; i<N-1; i++){
@@ -116,8 +111,6 @@ namespace Prog3{
 		return *this;
 	}
 	Domino& Domino::pdgr(Domino& Do, int k){
-		//std::cout<<"Input the number"<<std::endl;
-		//int k; getNum(k);
 		Dice* dices = new Dice[N];
 		int n =0;
 		for(int i = 0; i<N; i++){
@@ -127,9 +120,7 @@ namespace Prog3{
 			}
 		}
 		Do.SetDD(n, dices);
-		//Domino Do(n, dices);
-		std::cout<<Do;
-		
+		delete[] dices;	
 		return Do;
 	}
 }
