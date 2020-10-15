@@ -25,6 +25,8 @@ void OpenDice( Domino &Dom){
 void Subgroup(const Domino &Dom){
 		std::cout<<"Input the number"<<std::endl;
 		int k; getNum(k);
-		pdgr(Dom, k);
+		Domino Do;
+	       	Dom.pdgr(Do, k);
+		std::cout<<Do;
 }
 }

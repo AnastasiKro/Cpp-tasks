@@ -17,6 +17,11 @@ namespace Prog3{
 		N=1;
 	}
 	Domino& Domino::SetDD(int n, Dice dices[]){
+		if (N>1)
+			delete[] DD;
+		else
+			delete DD;
+		DD = new Dice[n];
 		N=n;
 		for (int i = 0; i<n; i++)
 			DD[i]=dices[i];
@@ -42,13 +47,20 @@ namespace Prog3{
 			SetAdd(dices[i]);
 		}
 	}
-	Domino::Domino(const Domino& Dom) :
-		N(Dom.N), DD(Dom.DD)
-	
+	Domino::Domino(const Domino& Dom)
 	{
-		//N=Dom.N;
-		//DD=Dom.DD;
+		if (N>1)
+			delete[] DD;
+		N = Dom.N;
+		DD= new Dice[N];
+		for (int i = 0; i< N; i++)
+			DD[i]=Dom.DD[i];
 		std::cout<<"Copy constructor worked!"<<std::endl;
+	}
+	Domino::Domino(Domino& Dom):
+		N(Dom.N), DD(Dom.DD)
+	{
+		Dom.DD=nullptr;
 	}
 	Domino& Domino::SetAdd(Dice dice){
 		if (findDice(dice.a, dice.b)!=-1){
@@ -111,6 +123,12 @@ namespace Prog3{
 			return *this;
 		}
 		DD[p]=DD[N-1];
+		Dice* DDD=new Dice[N-1];
+		for (int i = 0; i< N-1; i++)
+			DDD[i]=DD[i];
+		if (N>1)
+			delete[] DD;
+		DD=DDD;
 		N-=1;
 		return *this;
 	}
@@ -119,7 +137,7 @@ namespace Prog3{
 			throw std::invalid_argument("invalid k!");
 		return DD[k-1];
 	}
-	Domino& Domino::operator =(Domino& Dom){
+	Domino& Domino::operator =(Domino& Dom){//replacement operator
 		
 		if (N>1)
 			delete[] DD;
@@ -128,7 +146,19 @@ namespace Prog3{
 		DD=Dom.DD;
 		N=Dom.N;
 		Dom.DD=nullptr;
-		Domino* D = &Dom;
+		return *this;
+	}
+	Domino & Domino::operator =(const Domino& Dom){ //copy operator
+		if (&Dom == this)
+			return *this;
+		if (N>1)
+			delete[] DD;
+		else
+			delete DD;
+		N= Dom.N;
+		DD = new Dice[N];
+		for (int i = 0; i<N; i++)
+			DD[i]=Dom.DD[i];
 		return *this;
 	}
 	Domino& Domino::DomSort(){
@@ -143,27 +173,21 @@ namespace Prog3{
 		}
 		return *this;
 	}
-
-	void pdgr(const Domino& Dom, int k){
-		int N= Dom.getN();
+	Domino& Domino::pdgr(Domino& Do, int k)const{
 		Dice* dices = new Dice[N];
 		int n =0;
 		for(int i = 0; i<N; i++){
-			int a = Dom.getA(i); int b = Dom.getB(i);
-			if (a == k || b == k){
-				Dice d(a, b);
-				dices[n] = d;
+			if (DD[i].a == k || DD[i].b == k){
+				dices[n]=DD[i];
 				n+=1;
 			}
 		}
-		if (n>0){
-		Domino Do(n, dices);
-		std::cout<<Do;
-		delete[] dices;
-		}
+		Do.SetDD(n, dices);
+		if (n>1)
+			delete[] dices;
+		else
+			delete dices;	
+		return Do;
 	}
 }
-		
-
-		
 
