@@ -20,6 +20,10 @@ namespace Prog3{
 		int b;
 		Dice();
 		Dice(int a1, int b1);
+		int get1()const{ return a; }
+		int get2()const{ return b; }
+		Dice& set1(int k){ a=k; return *this; }
+		Dice& set2(int k){ b=k; return *this; }
 		friend std::istream & operator >> (std::istream& in, Dice& dice);
 		//~Dice();
 	};
@@ -44,7 +48,7 @@ namespace Prog3{
 			Domino & operator ++(int a);
 			Dice& operator []( int k);
 			Domino & DomSort();
-			Domino& pdgr(Domino& Do, int k);
+			Domino pdgr(int k);
 
 	};
 }

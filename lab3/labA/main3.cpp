@@ -58,16 +58,18 @@ void print_menu(){
 void OpenDice(Domino Dom){	
 		std::cout<<"Input number of the dice"<<std::endl;
 		int k; getNum(k);
-		if(k<Dom.getN() && k>0);
+		if(k<=Dom.getN() && k>0){
+			k-=1;
 		//Domino Do();
 		Dice d =Dom[ k];
 		Domino Do(1, &d);
-		std::cout<<Do;
+		std::cout<<Do;}
 }
 void Subgroup(Domino Dom){
 		std::cout<<"Input the number"<<std::endl;
 		int k; getNum(k);
-		Domino Do;
-		Do=Dom.pdgr(Do,k);
+		//Domino Do;
+		Domino Do=Dom.pdgr(k);
 		std::cout<<Do;
+		//delete &Do;
 }

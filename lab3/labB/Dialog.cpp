@@ -17,6 +17,7 @@ void print_menu(){
 void OpenDice( Domino &Dom){	
 		std::cout<<"Input number of the dice"<<std::endl;
 		int k; getNum(k);
+		k -=1;
 		Dice d=Dom[k];
 		Domino Do;
 		Do.SetDD(1, &d);
@@ -25,8 +26,7 @@ void OpenDice( Domino &Dom){
 void Subgroup(const Domino &Dom){
 		std::cout<<"Input the number"<<std::endl;
 		int k; getNum(k);
-		Domino Do;
-	       	Dom.pdgr(Do, k);
+	       	Domino Do =Dom.pdgr(k);
 		std::cout<<Do;
 }
 }

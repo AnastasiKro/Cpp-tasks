@@ -19,11 +19,11 @@ namespace Prog3{
 		N=0;
 		for (int i = 0; i<n; i++){
 			Dice dice;
-			int p = findDice(dice.a, dice.b);
+			int p = findDice(dice.get1(), dice.get2());
 			while (p != -1){
-				dice.a=(dice.a+1)%7;
-				dice.b = (dice.b+rand())%7;
-				p = findDice(dice.a, dice.b);
+				dice.set1((dice.get1()+1)%7);
+				dice.set2((dice.get2()+rand())%7);
+				p = findDice(dice.get1(), dice.get2());
 			}
 			SetAdd(dice);
 		}
@@ -49,7 +49,7 @@ namespace Prog3{
 	
 	int Domino::findDice(int a1, int b1){
 		for (int i =0; i<N; i++){
-			if ((DD[i].a==a1 && DD[i].b==b1)||(DD[i].a==b1 && DD[i].b==a1))
+			if ((DD[i].get1()==a1 && DD[i].get2()==b1)||(DD[i].get1()==b1 && DD[i].get2()==a1))
 				return i;
 		}
 		return -1;
@@ -58,7 +58,7 @@ namespace Prog3{
 	std::ostream& operator<<(std::ostream& out, Domino& Dom){
 		for (int i = 0; i<Dom.N;i++){
 			std::cout<<"   ________"<<std::endl;
-			out<<i+1<<".| "<<Dom.DD[i].a<<" | "<<Dom.DD[i].b<<" |"<<std::endl;		
+			out<<i+1<<".| "<<Dom.DD[i].get1()<<" | "<<Dom.DD[i].get2()<<" |"<<std::endl;		
 			std::cout<<"   --------"<<std::endl;
 		}
 		return out;
@@ -76,17 +76,17 @@ namespace Prog3{
 	}
 	Domino& Domino::operator ++(int a){
 		Dice dice;
-		int p = findDice(dice.a, dice.b);
+		int p = findDice(dice.get1(), dice.get2());
 		while (p != -1){
-				dice.a=(dice.a+1)%7;
-				dice.b = (dice.b+rand())%7;
-				p = findDice(dice.a, dice.b);
+				dice.set1((dice.get1()+1)%7);
+				dice.set2((dice.get2()+rand())%7);
+				p = findDice(dice.get1(), dice.get2());
 			}
 		SetAdd(dice);
 		return *this;
 	}
 	Domino& Domino::operator -=(const Dice& dice){
-		int p = findDice(dice.a, dice.b);
+		int p = findDice(dice.get1(), dice.get2());
 		if (p == -1){
 			throw std::invalid_argument("Invalid value");
 			//return *this;
@@ -96,12 +96,12 @@ namespace Prog3{
 		return *this;
 	}
 	Dice& Domino::operator []( int k){
-		return DD[k+1];
+		return DD[k];
 	}
 	Domino& Domino::DomSort(){
 		for (int i = 0; i<N-1; i++){
 			for( int j = 0; j<N-1; j++){
-				if (DD[j].a+DD[j].b>DD[j+1].a+DD[j+1].b){
+				if (DD[j].get1()+DD[j].get2()>DD[j+1].get1()+DD[j+1].get2()){
 					Dice D = DD[j];
 					DD[j]=DD[j+1];
 					DD[j+1]=D;
@@ -110,18 +110,22 @@ namespace Prog3{
 		}
 		return *this;
 	}
-	Domino& Domino::pdgr(Domino& Do, int k){
+	Domino Domino::pdgr( int k){
 		Dice* dices = new Dice[N];
 		int n =0;
 		for(int i = 0; i<N; i++){
-			if (DD[i].a == k || DD[i].b == k){
+			if (DD[i].get1() == k || DD[i].get2() == k){
 				dices[n]=DD[i];
 				n+=1;
 			}
 		}
-		Do.SetDD(n, dices);
-		delete[] dices;	
-		return Do;
+		Domino D(n, dices);
+		//Do.SetDD(n, dices);
+		if (n>1)
+			delete[] dices;
+		else
+			delete dices;
+		return D;
 	}
 }
 		

@@ -21,13 +21,17 @@ namespace Prog3{
 		int b;
 		Dice();
 		Dice(int a1, int b1);
+		Dice& set1(int k){ a = k; return *this; }
+		Dice& set2(int k){ b = k; return *this; }
+		int get1()const{ return a; }
+		int get2()const{ return b; }
 		friend std::istream & operator >> (std::istream& in, Dice& dice);
 		//~Dice();
 	};
 	class Domino{
 		private:
-			struct Dice* DD;
 			int N;
+			struct Dice* DD;
 		public:
 			Domino();
 			Domino(int n);
@@ -52,7 +56,7 @@ namespace Prog3{
 			Domino& operator =( Domino& Dom);
 			Domino& operator =(const Domino& Dom);
 			Domino & DomSort();
-			Domino& pdgr(Domino& Do, int k)const;
+			Domino pdgr(int k)const;
 
 	};
 	//void pdgr(const Domino& Dom, int k);

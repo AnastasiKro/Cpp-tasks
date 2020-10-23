@@ -32,25 +32,26 @@ namespace Prog3{
 		N=0;
 		for (int i = 0; i<n; i++){
 			Dice dice;
-			int p = findDice(dice.a, dice.b);
+			int p = findDice(dice.get1(), dice.get2());
 			while (p != -1){
-				dice.a=(dice.a+1)%7;
-				dice.b = (dice.b+rand())%7;
-				p = findDice(dice.a, dice.b);
+				dice.set1((dice.get1()+1)%7);
+				dice.set2((dice.b+rand())%7);
+				p = findDice(dice.get1(), dice.get1());
 			}
 			SetAdd(dice);
 		}
 	}
 	Domino::Domino(int n, Dice* dices){
-		N=0;
+		N=n;
+		DD = new Dice[n];
 		for(int i = 0; i<n; i++){
-			SetAdd(dices[i]);
+			DD[i]= dices[i];
 		}
 	}
 	Domino::Domino(const Domino& Dom)
 	{
-		if (N>1)
-			delete[] DD;
+	//	if (N>1)
+	//		delete[] DD;
 		N = Dom.N;
 		DD= new Dice[N];
 		for (int i = 0; i< N; i++)
@@ -63,7 +64,7 @@ namespace Prog3{
 		Dom.DD=nullptr;
 	}
 	Domino& Domino::SetAdd(Dice dice){
-		if (findDice(dice.a, dice.b)!=-1){
+		if (findDice(dice.get1(), dice.get2())!=-1){
 			std::cout<<"The dice already exists"<<std::endl;
 			return *this;
 		}
@@ -80,7 +81,7 @@ namespace Prog3{
 	
 	int Domino::findDice(int a1, int b1){
 		for (int i =0; i<N; i++){
-			if ((DD[i].a==a1 && DD[i].b==b1)||(DD[i].a==b1 && DD[i].b==a1))
+			if ((DD[i].get1()==a1 && DD[i].get2()==b1)||(DD[i].get1()==b1 && DD[i].get2()==a1))
 				return i;
 		}
 		return -1;
@@ -107,17 +108,17 @@ namespace Prog3{
 	}
 	Domino& Domino::operator ++(int a){
 		Dice dice;
-		int p = findDice(dice.a, dice.b);
+		int p = findDice(dice.get1(), dice.get2());
 		while (p != -1){
-				dice.a=(dice.a+1)%7;
-				dice.b = (dice.b+rand())%7;
-				p = findDice(dice.a, dice.b);
+				dice.set1((dice.get1()+1)%7);
+				dice.set2((dice.get2()+rand())%7);
+				p = findDice(dice.get1(), dice.get2());
 			}
 		SetAdd(dice);
 		return *this;
 	}
 	Domino& Domino::operator -=(const Dice& dice){
-		int p = findDice(dice.a, dice.b);
+		int p = findDice(dice.get1(), dice.get2());
 		if (p == -1){
 			std::cout<<"There is no such dice"<<std::endl;
 			return *this;
@@ -133,9 +134,9 @@ namespace Prog3{
 		return *this;
 	}
 	Dice& Domino::operator [](int k){
-		if (k>N||k<1)
+		if (k>=N||k<0)
 			throw std::invalid_argument("invalid k!");
-		return DD[k-1];
+		return DD[k];
 	}
 	Domino& Domino::operator =(Domino& Dom){//replacement operator
 		
@@ -164,7 +165,7 @@ namespace Prog3{
 	Domino& Domino::DomSort(){
 		for (int i = 0; i<N-1; i++){
 			for( int j = 0; j<N-1; j++){
-				if (DD[j].a+DD[j].b>DD[j+1].a+DD[j+1].b){
+				if (DD[j].get1()+DD[j].get2()>DD[j+1].get1()+DD[j+1].get2()){
 					Dice D = DD[j];
 					DD[j]=DD[j+1];
 					DD[j+1]=D;
@@ -173,16 +174,16 @@ namespace Prog3{
 		}
 		return *this;
 	}
-	Domino& Domino::pdgr(Domino& Do, int k)const{
+	Domino Domino::pdgr(int k)const{
 		Dice* dices = new Dice[N];
 		int n =0;
 		for(int i = 0; i<N; i++){
-			if (DD[i].a == k || DD[i].b == k){
+			if (DD[i].get1() == k || DD[i].get2() == k){
 				dices[n]=DD[i];
 				n+=1;
 			}
 		}
-		Do.SetDD(n, dices);
+		Domino Do(n, dices);
 		if (n>1)
 			delete[] dices;
 		else

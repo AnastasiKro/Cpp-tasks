@@ -1,0 +1,4 @@
+all:
+	g++ Test.cpp -o TEST -Llib -lDomino -lgtest -lpthread
+clean:
+	rm TEST
