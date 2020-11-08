@@ -15,9 +15,12 @@ namespace Prog4{
 		}while(flag==0);
 		return 0;
 	}	
-	class C{
+	class hero{
 		private:
-			C;
+			int x;
+			int y;
+			int hp;
+			
 		public:
 
 	};

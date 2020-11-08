@@ -12,15 +12,13 @@ namespace Prog3{
 	}
 	Domino::Domino(){
 		Dice d;
-		DD = new Dice;
+		DD = new Dice[1];
 		DD[0]=d;
 		N=1;
 	}
 	Domino& Domino::SetDD(int n, Dice dices[]){
-		if (N>1)
 			delete[] DD;
-		else
-			delete DD;
+		
 		DD = new Dice[n];
 		N=n;
 		for (int i = 0; i<n; i++)
@@ -73,7 +71,6 @@ namespace Prog3{
 			DDD[i]=DD[i];
 		DDD[N]=dice;
 		N+=1;
-		if (N>1)
 			delete[] DD;
 		DD=DDD;
 		return *this;
@@ -127,7 +124,7 @@ namespace Prog3{
 		Dice* DDD=new Dice[N-1];
 		for (int i = 0; i< N-1; i++)
 			DDD[i]=DD[i];
-		if (N>1)
+		//if (N>1)
 			delete[] DD;
 		DD=DDD;
 		N-=1;
@@ -140,10 +137,8 @@ namespace Prog3{
 	}
 	Domino& Domino::operator =(Domino& Dom){//replacement operator
 		
-		if (N>1)
+		//if (N>1)
 			delete[] DD;
-		else
-			delete DD;
 		DD=Dom.DD;
 		N=Dom.N;
 		Dom.DD=nullptr;
@@ -152,10 +147,8 @@ namespace Prog3{
 	Domino & Domino::operator =(const Domino& Dom){ //copy operator
 		if (&Dom == this)
 			return *this;
-		if (N>1)
+
 			delete[] DD;
-		else
-			delete DD;
 		N= Dom.N;
 		DD = new Dice[N];
 		for (int i = 0; i<N; i++)
@@ -184,10 +177,7 @@ namespace Prog3{
 			}
 		}
 		Domino Do(n, dices);
-		if (n>1)
 			delete[] dices;
-		else
-			delete dices;	
 		return Do;
 	}
 }

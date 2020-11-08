@@ -1,0 +1,4 @@
+break main
+break Draw
+break Readfile
+
