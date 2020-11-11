@@ -4,7 +4,10 @@
 #include <iostream>
 namespace Necromancer{
 	//template <class T>
-	
+	//Myself& Myself::setmax(){
+		//if (level == 1){
+			//max_hp = 7;
+
 	void Myself::draining_hp(Alive& enem){
 		//std::cout<<
 		//printw("Enemy is dead, input 1 to turn him into health; 2 to turn him into mana");//<<std::endl;
@@ -12,27 +15,50 @@ namespace Necromancer{
 		//if (n == '2'){
 		//	mana+=enem.getexp();
 		//}
-		//if (n == '1'){
+		enem.sethp(enem.gethp()-1);
+		if (enem.gethp()<=0){
+			enem.setcond(0);
 			hp+=enem.getexp();
-		//}
+
+		if (hp>max_hp)
+			hp = max_hp;
 		exp+=3;
 		if (exp>12){
 			level+=1;
 			exp=1;
 		}
+		enem.setx(-10);
+		enem.sety(-10);
+		}
 	}
 	void Myself::draining_mana(Alive& enem){
+		enem.sethp(enem.gethp()-1);
+		if (enem.gethp()<=0){
+			enem.setcond(0);
 		mana+=enem.getexp();
+		if (mana>max_mana)
+			mana=max_mana;
 		exp+=3;
+		enem.setx(-10);
+		enem.sety(-10);
 		if(exp>12){
 			level+=1;
 			exp=1;
 		}
+		}
 	}
+	int Myself::wounded(Alive& en){
+		en.exp+=1;
+		hp-=1;
+		if (hp <=0)
+			return 0;
+		return 1;
+	}
+
 	Alive::Alive(){
 		setname("");
 		setmax_hp(0);
-		setexp(rand()%7+1);
+		setexp(rand()%5+1);
 	}
 		
 	Alive::Alive(std::string str, int m, int h, int f, int ex, int c){
@@ -47,12 +73,14 @@ namespace Necromancer{
 		setname(enem.getname());
 		setmax_hp(enem.getmax_hp());
 		sethp(getmax_hp());
+		setx(enem.getx());
+		sety(enem.gety());
 		setfr(1);
 		if (c == 's')
 			type = "skeleton";
 		if (c == 'g')
 			type = "ghowl";
-		if (c == 'd')
+		if (c == 'f')
 			type = "gul";
 		if (c == 'z')
 			type = "zombie";
@@ -63,15 +91,21 @@ namespace Necromancer{
 		level = 1;
 		mana = 0;
 		fr = 1;
+		max_hp = level*2+5;
+		max_mana = level*5+10;
 	}
 	void Myself::curse(Alive& enem){
 	}
-	Undead Myself::necromancy(Alive& enem){
-		printw("print s to turn it intoto skeleton, g - into ghowl, d - into gul, z - zombie");
-		char c = getch();
+	std::vector <Undead> Myself::necromancy(Alive& enem, char c, std::vector <Undead> u){
+		//printw("print s to turn it intoto skeleton, g - into ghowl, d - into gul, z - zombie");
 		Undead U(enem, c);
-		delete &enem;
-		return U;
+		//std::cout<< U.getname()<<U.gettype()<<std::endl;
+
+		u.push_back(U);
+		exp+=1;
+		//delete &enem;
+		return u;
 
 	}
+	
 }	

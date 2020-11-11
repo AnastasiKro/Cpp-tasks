@@ -23,22 +23,29 @@ namespace Necromancer{
 			Enemy& setname(std::string str){ name =str; return *this;}
 			Enemy& setmax_hp(int mh){ max_hp = mh; return *this;}
 			Enemy& setfr(int f){ fr = f; return *this;}
+		
 	
 	};
 	class Alive: public Enemy{
 		int exp;
 		int condition;
 		public:
+			friend class Myself;
 			Alive();
 			Alive(std::string name, int m, int h, int f, int ex, int c);
 			int getexp()const {return exp;}
 			Alive& setexp(int a){ exp = a; return *this; }
 			int getcond()const {return condition;}
+			Alive& setcond(int c){ condition = c; return *this;}
+		//	int wound(Myself& me);
 	};
 	class Undead: public Enemy{
 		std::string type;
 		public:
+			std:: string gettype()const{ return type;}
+			Undead& settype(std::string t){ type = t; return *this;}
 			Undead(Alive& a, char str);
+		friend class Myself;
 	};
 	struct tab{
 		std::string name;
@@ -58,6 +65,8 @@ namespace Necromancer{
 			tab* T;
 			//std::vector <tab> V;
 		public:
+			friend class Alive;
+			friend class Undead;
 			Myself();
 			int getexp() const{ return exp; }
 			int getmax_hp() const {return max_hp;}
@@ -70,11 +79,15 @@ namespace Necromancer{
 			Myself& setmax_mana(){max_mana = level*5; return *this; }	
 			Myself& setexp(int a){exp=a; return *this;}
 			Myself& sethp(int a){ hp=a; return *this;}
-			Myself& setlevel(){ level+=1; return *this;}
+			Myself& setlevel(int a){ level=a; return *this;}
+			Myself& setfr(int f){ fr = f; return *this;}
 			void draining_mana(Alive& enem);
+			int wounded(Alive& en);
 			void draining_hp(Alive& enem);
-			Undead necromancy(Alive& enem);
+			std::vector <Undead> necromancy(Alive& enem, char c, std::vector <Undead> u);
 			void curse(Alive& enem);
 	};
+	Myself Readme();
+	Alive* Readfile( int* n);
 		
 }

@@ -1,50 +1,67 @@
 #include <iostream>
 #include <fstream>
+#include "lab4.h"
+namespace Necromancer{
+	Myself Readme(){
+		Myself me;
 
-int main(){
-	//e = new Alive[1];
+		char line[3];
+		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/myself");
+		if (in.is_open()){
+			in.getline(line, 3);
+			me.setexp(atoi(line));
+			in.getline(line, 3);
+			me.setlevel(atoi(line));
+		//	in.getline(line);
+		//	me.setx(atoi(line));
+		//	in.getline(line, 3);
+		//	me.sety(atoi(line));
+			in.getline(line, 3);
+			me.setfr(atoi(line));
+			in.close();
+		}
+		return me;
+	}
+
+		
+Alive* Readfile( int* n){
 	char line[10];
-	int n = 0;
-	//char x[2]; char y[2];
-	//std::string line;
-	//if (j==1)
-	//	std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/enemies");
-	//else
+	Alive* e;
 		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/enemies");
 	if (in.is_open()){
 		while (!in.eof()){
-			//n+=1;
-			//std::cout<<n<<std::endl;
 			in.getline(line, 10);
-			std::cout<<line<<std::endl;
 			if (in.eof())
 				break;
-			n+=1;
-			char* x1 = new char[3]; char* y1= new char[3];
-			//*n+=1;
-			//Alive* ee = new Alive[*n];
-			//for (int i = 0; i<*n-1; i++)
-			//	ee[i]=e[i];
-			//ee[*n-1].setname(line);
-			//printw(line);
-			in.getline(x1, 3);
-			//ee[*n-1].setx(atoi(x1));
-			std::cout<<x1<<std::endl;
-			if (in.eof())
-				break;
-			in.getline(y1,3);
-			std::cout<<y1<<std::endl;
-			//ee[*n-1].sety(atoi(y1));
-			//delete[] e;
-			delete[] x1; delete[] y1;
-			//= ee;
-			//if (n==5)
+			char* max_hp = new char[3];
+			*n+=1;
+			Alive* ee = new Alive[*n];
+			for (int i = 0; i<*n-1; i++)
+				ee[i]=e[i];
+			ee[*n-1].setname(line);
+			in.getline(max_hp, 3);
+			ee[*n-1].setmax_hp(atoi(max_hp));
+			//std::cout<<x1<<std::endl;
+			//if (in.eof())
 			//	break;
-			if (in.eof())
-				break;
+			in.getline(max_hp,3);
+			//std::cout<<y1<<std::endl;
+			ee[*n-1].sethp(atoi(max_hp));
+			in.getline(max_hp, 3);
+			ee[*n-1].setexp(atoi(max_hp));
+			in.getline(max_hp, 3);
+			ee[*n-1].setfr(atoi(max_hp));
+			ee[*n-1].setx(rand()%20);
+			ee[*n-1].sety(rand()%20);
+			ee[*n-1].setcond(1);
+			if (*n>2)
+				delete[] e;
+			delete[] max_hp;
+			e = ee;
 		}
 	}
 	in.close();
-	return 0;
+	return e;
 }
 
+}
