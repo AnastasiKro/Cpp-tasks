@@ -6,6 +6,7 @@ namespace Necromancer{
 		Myself me;
 
 		char line[3];
+		char str[10];
 		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/myself");
 		if (in.is_open()){
 			in.getline(line, 3);
@@ -18,6 +19,22 @@ namespace Necromancer{
 		//	me.sety(atoi(line));
 			in.getline(line, 3);
 			me.setfr(atoi(line));
+			std::vector <tab> T;
+			while (!in.eof()){
+				tab t1;
+				in.getline(str, 10);
+				if (in.eof())
+					break;
+				t1.name = str;
+				in.getline(str, 10);
+				t1.parent = str;
+				in.getline(line, 3);
+				t1.mana = atoi(line);
+				in.getline(line, 3);
+				t1.charact = atoi(line);
+				T.push_back(t1);
+				me.setV(T);
+			}
 			in.close();
 		}
 		return me;

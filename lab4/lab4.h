@@ -44,7 +44,7 @@ namespace Necromancer{
 		public:
 			std:: string gettype()const{ return type;}
 			Undead& settype(std::string t){ type = t; return *this;}
-			Undead(Alive& a, char str);
+			Undead(Alive& a, std::string str);
 		friend class Myself;
 	};
 	struct tab{
@@ -62,8 +62,9 @@ namespace Necromancer{
 			int level;
 			int fr;
 			int mana;
-			tab* T;
-			//std::vector <tab> V;
+			//tab* T;
+			std::vector <tab> V;
+			std::vector <tab> :: iterator iter;
 		public:
 			friend class Alive;
 			friend class Undead;
@@ -75,11 +76,14 @@ namespace Necromancer{
 			int getlevel()const { return level;}
 			int getfr()const { return fr;}
 			int getmana()const { return mana; }
+			std::vector <tab> getV()const { return V; }
+			Myself& setV(std::vector <tab> T){V = T; return *this;} 
 			Myself& setmax_hp(){ max_hp=level*2+5; return *this; }
 			Myself& setmax_mana(){max_mana = level*5; return *this; }	
 			Myself& setexp(int a){exp=a; return *this;}
 			Myself& sethp(int a){ hp=a; return *this;}
-			Myself& setlevel(int a){ level=a; return *this;}
+			Myself& setlevel(int a){ level = a; return *this;}
+			Myself& increase_level();
 			Myself& setfr(int f){ fr = f; return *this;}
 			void draining_mana(Alive& enem);
 			int wounded(Alive& en);

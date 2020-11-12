@@ -31,7 +31,7 @@ void Draw(Alive* e,Myself& me,int n){
 	mvprintw(24, 1,"%d\n", x);
 	printw("%d\n", y);
 	printw("W - Werewolf, O - ogr, G - goblin, D - dwarf, T - troll\n");
-	printw("g - gul, gh - ghowl, s - skeleton, z - zombie\n");
+	printw("g - gul, gh - ghost, s - skeleton, z - zombie, p - phantom\n");
 	for(int i = 0; i<width+1; i++)
 		printw("#");
 	printw("   level: %d; hp: %d, experience: %d, mana: %d, fraction: %d", me.getlevel(), me.gethp(), me.getexp(), me.getmana(), me.getfr());
@@ -68,10 +68,12 @@ void Draw(Alive* e,Myself& me,int n){
 						printw("s");
 					if (it->gettype() == "gul")
 						printw("g");
-					if(it->gettype() == "ghowl")
+					if(it->gettype() == "ghost")
 						printw("gh");
 					if (it->gettype() == "zombie")
 						printw("z");
+					if (it->gettype() == "phantom")
+						printw("p");
 					p = -2;
 				}
 		
@@ -124,18 +126,15 @@ void Input(Alive* e, Myself& me, int n){
 					//e[i].setx(-10);e[i].sety(-10);
 					 }}
 				break;
-			case 'D':
+			/*case 'D':
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					me.draining_mana(e[i]);
-					e[i].setx(-10);e[i].sety(-10); }}
-				break;
+					me.draining_mana(e[i]); }}
+				break;*/
 			case 's':
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 's', u);
-					e[i].setx(-10);
-					e[i].sety(-10);
 				}
 				}	
 			//	if (en_x <x+2 && en_x>x-2&&en_y<y+2 && en_y>y-2){
@@ -145,8 +144,6 @@ void Input(Alive* e, Myself& me, int n){
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 'g', u);
-					e[i].setx(-10);
-					e[i].sety(-10);
 				}
 				}
 				break;
@@ -154,8 +151,6 @@ void Input(Alive* e, Myself& me, int n){
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 'f', u);
-					e[i].setx(-10);
-					e[i].sety(-10);
 				}
 				}
 				break;
@@ -163,13 +158,18 @@ void Input(Alive* e, Myself& me, int n){
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 'z', u);
-					e[i].setx(-10);
-					e[i].sety(-10);
 				}
 				}
 				break;
 			case 'x':
 				gameOver= true;
+				break;
+			case 'p':
+				for (int i = 0; i<n; i++){
+				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
+					u =me.necromancy(e[i], 'p', u);
+				}
+				}
 				break;
 			default:
 				for (int i = 0; i<n; i++){
@@ -206,7 +206,14 @@ void Logic(){
 			break;/
 	}*/
 }
-
+int printv(Myself me){
+	std::vector <tab> T = me.getV();
+	std::vector <tab> :: iterator iter; 
+	for (iter = T.begin(); iter<T.end(); iter++){
+		std::cout<<iter->name<<" "<<iter->parent<<" "<< iter->mana<<" "<<iter->charact<<std::endl;
+	}
+	return 0;
+}
 int printenu(){
 	for (it = u.begin(); it<u.end(); it++){
 		std::cout<<it->getname()<<std::endl;
@@ -225,6 +232,45 @@ int printen(Alive* e, int n){
 	}
 	return 0;
 }
+/*std::vector <tab> CreateTable(){
+	tab t1;
+	t1.name = "draining";
+	t1.parent = "";
+	t1.mana = 0;
+	t1.charact = 1;//level of draining
+	T.push_back(t1); 
+	tab t2;
+	t2.name = "skeleton";
+	t2.parent = "";
+	t2.mana = 2;
+	t2.charact = 1;//is available
+	T.push_back(t2);
+	tab t3;
+	t3.name = "gul";
+	t3.parent = "skeleton";
+	t3.mana = 4;
+	t3.charact = 0; //is not available
+	T.push_back(t3);
+	tab t4;
+	t4.name = "ghost";
+	t4.parent = "";
+	t4.mana = 5;
+	t4.charact = 0;
+	T.push_back(t4);
+	tab t5;
+	t5.name = "phantom";
+	t4.parent = "ghost";
+	t4.mana = 7;
+	t4.charact = 0;
+	T.push_back(t5);
+	tab t6;
+	t6.name = "zombie";
+	t6.parent = "";
+	t6.mana = 10;
+	t6.charact = 0;
+	T.push_back(t6);
+	return T;
+}*/
 int main(){
 	SetUp();
 	//while (!gameOver){
@@ -246,7 +292,8 @@ int main(){
 		Logic();
 	}
 	endwin();
-	printenu();
+	printv(me);
+	//printenu();
 	return 0;
 }
 
