@@ -82,7 +82,7 @@ namespace Necromancer{
 								std::vector <tab> :: iterator i;
 								for (i = V.begin(); i<V.end(); i++){
 									if (i->name == iter->parent){
-										if (iter->charact == 1){
+										if (i->charact == 1){
 										iter->charact = 1;
 										return *this; }
 									}
