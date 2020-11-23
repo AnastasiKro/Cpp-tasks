@@ -14,11 +14,15 @@ bool gameOver;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 const int width=20;
 const int height=20;
-int x, y, en_x, en_y, un_x, un_y;
+extern cell Cell[width][height];
+int x, y;
 eDirection dir;
-std::vector <Undead> u;
+en e;
+
+extern std::vector <Undead> u;
 std::vector <Undead> :: iterator it;
-std:: vector <tab> T;
+std::vector <tab> T;
+std::vector <Prizivatel> p;
 //std::vector <tab> :: iterator iter;
 std::vector <coef> C;
 void SetUp(){
@@ -26,9 +30,25 @@ void SetUp(){
 	dir = STOP;
 	x = width/2;
 	y = 0;
+	for (int i = 0; i<height; i++){
+	       for (int j = 0; j<width; j++){
+		       if (j == 0 || j == width - 1){
+			       Cell[i][j].settype(1);
+			       Cell[i][j].setwho(0);
+			       Cell[i][j].setObj(nullptr);
+		       }
+		       else{
+		   Cell[j][i].settype(0);
+		   Cell[j][i].setObj(nullptr);
+		   Cell[j][i].setwho(0); }
+	       }
+	}
+	Cell[y][x].settype(0);
+	Cell[y][x].setwho(1);
+	       		   
 }
 
-void Draw(Alive* e,Myself& me,int n){
+void Draw(Myself& me){
 	mvprintw(24, 1,"%d\n", x);
 	printw("%d\n", y);
 	printw("W - Werewolf, O - ogr, G - goblin, D - dwarf, T - troll\n");
@@ -42,126 +62,103 @@ void Draw(Alive* e,Myself& me,int n){
 		       printw("%s, ", iter->name.c_str());
 	}	
 	printw("\n");
-	for (int i = 0; i<height+1; i++){
-		for (int j = 0; j<width+1; j++){
-			if (j==0 || j == width){
+	for (int i = 0; i<height; i++){
+		for (int j = 0; j<width; j++){
+			if (Cell[i][j].getwho() == 0 && Cell[i][j].gettype()==0)
+				printw(" ");
+			if (Cell[i][j].getwho() ==-1)
+				printw("-");
+			if(Cell[i][j].getwho() == 1)
+				printw("@");
+			if(Cell[i][j].getwho() == 2){
+				std::string str = Cell[i][j].getObj()->getname();
+				printw("%c", str[0]);	
+			}
+			if (Cell[i][j].getwho() == 3){
+				std::string str = Cell[i][j].getObj()->gettype();
+				printw("%c", str[0]);}
+			if (Cell[i][j].getwho() == 4){
+				
+				std::string str = Cell[i][j].getObj()->gettype();
+				if (str=="Alive"){
+					std::string name = Cell[i][j].getObj()->getname();
+					printw("%c", name[0]);
+				}
+				else	
+					printw("%c", str[0]);
+			}
+			if (x>j-3 && x<j+3 &&y<i+3 && y>i-3 && Cell[i][j].getwho()>1){
+				Unit* it = Cell[i][j].getObj();
+				printw(" %s, hp: %d, fraction: %d",  it->getname().c_str(), it->gethp(), it->getfr());
+			}
+			if (j==0 || j == width-1){
 				printw("#");
 			}
-			int p = -10;
-			if (j == x && i == y){
-				printw("@");
-				p = -1;
-			}
-			
-			for (int k = 0; k<n; k++){
-			if (j == e[k].getx() && i == e[k].gety()){
-				p = k;
-				if (e[k].getname() == "Werewolf")
-					printw("W");
-				if (e[k].getname() == "Ogr")
-					printw("O");
-				if (e[k].getname() == "Goblin")
-					printw("G");
-				if (e[k].getname() == "Troll")
-					printw("T");
-				if (e[k].getname() == "Dwarf")
-					printw("D");
-				}
-			}
-			for (it = u.begin(); it<u.end(); it++)
-				if (j ==it->getx() && i == it->gety()){
-					if (it->gettype() == "skeleton")
-						printw("s");
-					if (it->gettype() == "gul")
-						printw("g");
-					if(it->gettype() == "ghost")
-						printw("gh");
-					if (it->gettype() == "zombie")
-						printw("z");
-					if (it->gettype() == "phantom")
-						printw("p");
-					if (x>j-3 && x<j+3 &&y<i+3 && y>i-3)
-						printw(" %s, %s, hp: %d, fraction: %d", it->gettype().c_str(), it->getname().c_str(), it->gethp(), it->getfr());
-					p = -2;
-				}
-		
-			 if ( p == -10)
-				printw(" ");
-			 if ((p> -1) && (e[p].getx() < x+3) && (e[p].getx()>x-3)&& (e[p].gety() >y-3) && (e[p].gety()< y+3)){
-				 printw(" %s, exp: %d, hp: %d, fraction: %d", e[p].getname().c_str(), e[p].getexp(), e[p].gethp(), e[p].getfr());
-			 }
-			 
-		}	
+		}
 		printw("\n");
 	}
 	for(int i = 0; i<width+1; i++)
 		printw("#");
 	printw("\n");
 }
-void enemy_attack(Alive* e, Myself& me,int n){
-	for (int i = 0; i<n; i++){
-		int x1 = e[i].getx(); int y1 = e[i].gety();
-		if (e[i].getcond()==1 && x1 <x+3 && x1>x-3&&y1<y+3 && y1>y-3){
-			int a = rand()%10000;
-			if (a == 1){
-				int b =me.wounded(e[i]);
-				if (b==0)
-					gameOver = true;
+void MoveMe(Myself& me, int x1, int y1, int x2, int y2){
+		Cell[y2][x2].setwho(1);
+		Cell[y2][x2].setObj(&me);
+		Cell[y1][x1].setwho(0);
+		Cell[y1][x1].setObj(nullptr);
+}
+
+int P(int r){
+	if (r==0 || r ==1)
+		return 0;
+	else
+		return r-2;
+}
+void enemy_attack(){
+	for (int i = 0; i<height; i++){
+		for (int j = 0; j<width; j++){
+			if (Cell[i][j].getwho()>1){
+				Unit *q = Cell[i][j].getObj();
+				for (int k = P(i); k<i+3; k++){
+					for( int l = P(j); l<j+3; l++){
+						if (Cell[k][l].getwho()>0&& (k!=i || l!=j)){
+							Unit* r = Cell[k][l].getObj();
+							int a = rand()%10000;
+							if (a !=0)
+								break;
+							int m =q->hit_enem(r);
+							if (m ==0){
+								if (Cell[k][l].getwho() == 2){
+									Cell[k][l].getObj()->setcond(0);
+									Cell[k][l].setwho(-1);
+								}
+								if(Cell[k][l].getwho() == 1)
+									gameOver = true;
+								if (Cell[k][l].getwho() == 3){
+									Cell[k][l].del();
+								}
+							}
+						}
+					}
 				}
-		}
-		for (int j = 0; j<n; j++){
-			int x2 = e[j].getx(); int y2 = e[j].gety();
-			if (e[i].getfr()!=e[j].getfr() &&e[i].getcond() == 1&& e[j].getcond() !=0  && x1< x2+3 && x1>x2-3 && y1>y2-3 && y1<y2+3){
-				e[i].hitenem(e[j]);}
-		}
-		for (it = u.begin(); it<u.end(); it++){
-			int x2 = it->getx(); int y2 = it->gety();
-			if (e[i].getfr() != it->getfr() &&e[i].getcond()==1 && x1 >x2-3 && x1 < x2+3 && y1 >y2-3 && y1 < y2+3){
-				int a = rand()%10005;
-				if (a == 1)
-					it->wounded(e[i]);
-				if (a == 2)
-					it->hitenem(e[i]);
 			}
-		}
-		int ab = rand()%30000;
-		if (e[i].getPr()==1&& ab == 3){
-			Undead U =Create_slaves(e[i], u);
-			u.push_back(U);
 		}
 	}
 }
-void undead_attack(Alive* e, Myself& me, int n){
-	for (it = u.begin(); it<u.end(); it++){
-		int x1 = it->getx(); int y1= it->gety();
-		if (it->getfr()!=1 && x1<x+3 && x1>x-3&& y1>y-3&&y1<y+3){
-			int a = rand()%10000;
-			if (a==0){
-				int b =me.wound(*it);
-				if (b == 0)
-					gameOver = true;
-				}
-		}
-		std::vector <Undead> :: iterator ij;
-		for (ij = u.begin(); ij< u.end(); ij++){
-			int x2 = ij->getx(); int y2 = ij->gety();
-			if (it->getfr()!=ij->getfr() && x1>x2-3&&x1<x2+3&&y1>y2-3&&y1<y2+3){
+void Prizivatel_attack(){
+	for (int i = 0; i<height; i++){
+		for (int j = 0; j< width; j++){
+			if (Cell[i][j].getwho()==4){
 				int a = rand()%10000;
-				if (a ==0)
-					it->hiten(*ij);
-				if (a == 1)
-					ij->hiten(*it);
+				if (a == 5){
+					Cell[i][j].getObj()->create_slaves();
+					//u.push_back(U);
+				}
 			}
-		}
-		int ab = rand()%30000;
-		if (it->getPr()==1 && ab == 4){
-			Undead U =create_slaves(*it, u);
-			//std::cout<<U.gettype()<<std::endl;
-			u.push_back(U);
 		}
 	}
 }
-void Input(Alive* e, Myself& me, int n){
+void Input( Myself& me){
 //	while(TRUE){
 		//char x = getch();
 	//if (_kbhit()){//проверка, нажата ли клавиша
@@ -169,46 +166,60 @@ void Input(Alive* e, Myself& me, int n){
 		{
 			
 			case 'h':
-				printw("%d\n", x);
-				dir = LEFT;
-				if (x>0)
+				if (x>1&& Cell[y][x-1].gettype()==0 &&Cell[y][x-1].getwho()==0){
 					x--;
-				break;
-			case 'j':
-				dir = UP;
-				if (y>0)
-					y--;
-				break;
-			case 'k':
-				dir = RIGHT;
-				if(x<width-1)
-					x++;
-				break;
-			case 'l':
-				dir = DOWN;
-				if (y<height)
-					y++;
-				break;
-			case 'd':
-				for (int i = 0; i<n; i++){
-
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					me.draining(e[i]);
-					e[i].setx(-10);e[i].sety(-10);
-					 }}
-				//for (it = u.begin(); it<u.end(); it++){
+					MoveMe(me, x+1, y, x, y);
+				}
 					
 				break;
-			case 'b': 
-				for (int i = 0; i<n; i++){
-
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					me.hit(e[i]); }}
-				for (it = u.begin(); it<u.end(); it++){
-				if (it->getx() <x+3 && it->getx()>x-3&&it->gety()<y+3 && it->gety()>y-3){
-					me.hit(*it); }}		
+			case 'j':
+				if (y>1 && Cell[y-1][x].gettype()==0&&Cell[y-1][x].getwho() ==0){
+					y--;
+					MoveMe(me, x, y+1, x, y);
+				}
 				break;
-			case 's':
+			case 'k':
+				if(x<width-1&& Cell[y][x+1].gettype()==0&& Cell[y][x+1].getwho()==0){
+					x++;
+					MoveMe(me, x-1, y, x, y);
+				}
+
+				break;
+			case 'l':
+				if (y<height&& Cell[y+1][x].gettype()==0 && Cell[y+1][x].getwho()==0){
+					y++;
+					MoveMe(me, x, y-1, x, y);
+				}
+				break;
+			case 'd':
+				for (int i = P(x); i<x+3; i++){
+					for(int j = P(y); j<y+3; j++){
+					       if(Cell[j][i].getwho()==-1){
+						       Unit* a = Cell[j][i].getObj();
+						       int p =me.draining(a);
+						       if (p == 0){
+							       Cell[j][i].setwho(0);
+							       Cell[j][i].setObj(nullptr);
+						       }
+					       }
+					}
+				}
+				break;
+			case 'b': 
+				for (int i = P(x); i<x+3; i++){
+					for (int j = P(y); j<y+3; j++){
+						if (Cell[j][i].getwho()>1){
+							Unit* a = Cell[j][i].getObj();
+							int p =me.hit_enem(a);
+							if (p == 0)
+								Cell[j][i].del();
+							if (p==2)
+								Cell[j][i].setwho(-1);
+					       	}
+					}
+				}
+				break;
+			/*case 's':
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 's', u, C);
@@ -237,43 +248,22 @@ void Input(Alive* e, Myself& me, int n){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					me.curse(e[i]);
 				}}
-				break;
+				break;*/
 			case 'x':
 				gameOver= true;
 				break;
-			case 'p':
+			/*case 'p':
 				for (int i = 0; i<n; i++){
 				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
 					u =me.necromancy(e[i], 'p', u, C);
 				}}
-				break;
+				break;*/
 			default:
-				enemy_attack(e, me,n);
-				undead_attack(e, me,n);
+				enemy_attack();
+				Prizivatel_attack();
 				break;
 		}
 }
-/*void Logic(){
-	switch (dir){
-		case LEFT:
-		//	printw("hhh");
-			if (x>1)
-				x--;
-			break;
-		case RIGHT:
-			if (x<width)
-				x++;
-			break;
-		case UP:
-			if (y<height)
-				y++;
-			break;
-		case DOWN:
-			if (y>1)
-				y--;
-			break;/
-	}
-}*/
 int printv(Myself me){
 	std::vector <tab> T = me.getV();
 	std::vector <tab> :: iterator iter; 
@@ -292,11 +282,14 @@ int printenu(){
 	}
 	return 0;
 }
-int printen(Alive* e, int n){
-	for (int i = 0; i<n; i++){
-		printw("%s", e[i].getname());
-		printw("\n%d\n", e[i].getx());
-		printw("%d\n", e[i].gety());
+int printCell(){
+	for (int i = 0; i<height; i++){
+		for (int j = 0; j<width; j++){
+			if (Cell[i][j].getObj()!=nullptr){
+			std::cout<<i<<" "<<j<<std::endl;
+			//if(Cell[i][j].getObj()!=nullptr)
+				std::cout<<Cell[i][j].getObj()->getname()<<" "<<Cell[i][j].getObj()->gethp()<<std::endl;
+		}}
 	}
 	return 0;
 }
@@ -309,16 +302,20 @@ int main(){
 	nodelay(stdscr, TRUE);
 	int n = 0;
 	C = ReadCoef();
-       	Alive* e =Readfile( &n);
-	u=ReadUndead();
+	p = ReadPrizivatel(Cell);
+       	e=Readfile( n, Cell);
+	u=ReadUndead(Cell);
 	Myself me= Readme();
+	me.setname("me");
+	Cell[0][width/2].setObj(&me);
 	while (!gameOver){
 	//	printen(e, n);
-		Draw(e, me, n);
-		Input(e, me, n);
+		Draw( me);
+		Input(me);
 	}
 	endwin();
-	printv(me);
+	//printv(me);
+	printCell();
 	//printenu();
 	return 0;
 }

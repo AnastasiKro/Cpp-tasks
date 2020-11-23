@@ -4,9 +4,10 @@ CFLAGS=-c -Wall
 all: game #то, что будет по итогу компиляции
 
 
-game: game.o prog4.o file.o
-	$(CC) game.o prog4.o file.o -o game -lncurses -g
-
+game: game.o prog4.o file.o container.o
+	$(CC) game.o prog4.o file.o container.o -o game -lncurses -g
+container.o: container.cpp
+	$(CC) $(CFLAGS) container.cpp
 game.o: game.cpp
 	$(CC) $(CFLAGS) game.cpp -lncurses
 file.o: file.cpp

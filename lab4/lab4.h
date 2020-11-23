@@ -1,8 +1,7 @@
 #include <string>
 #include <vector>
 namespace Necromancer{
-	//template <class T>
-	class Enemy{
+	class Unit{
 		private:
 			std::string name;
 			int max_hp;
@@ -12,59 +11,115 @@ namespace Necromancer{
 			int damage;
 			int x;
 			int y;
-			int Pr;
-			std::string slave_type;
+			int level;
 		public:
 			std::string getname()const{ return name; }
 			int getmax_hp()const{ return max_hp;}
 			int gethp()const{ return hp;}
 			int gethit()const {return hit;}
+			int getlevel(){ return level; }
 			int getdamage()const{ return damage;}
 			int getfr() const {return fr;}
-			int getPr()const { return Pr;}
-			std::string getslaves_type()const{ return slave_type;}
 			int getx()const { return x;}
 			int gety()const { return y; }
-			Enemy& setPr(int P){ Pr = P; return *this; }
-			Enemy& setslaves_type(std::string str){ slave_type = str; return *this; }
-			Enemy& sethit(int h){ hit = h; return *this; }
-			Enemy& setdamage(int d){ damage = d; return *this; }
-			Enemy& setx(int a) {x=a; return *this; };
-			Enemy& sety(int a){ y =a; return *this; }
-			Enemy& sethp(int h){ hp = h; return *this; }
-			Enemy& setname(std::string str){ name =str; return *this;}
-			Enemy& setmax_hp(int mh){ max_hp = mh; return *this;}
-			Enemy& setfr(int f){ fr = f; return *this;}
-			//void create_slaves();
+			Unit& sethit(int h){ hit = h; return *this; }
+			Unit& setdamage(int d){ damage = d; return *this; }
+			Unit& setx(int a) {x=a; return *this; };
+			Unit& sety(int a){ y =a; return *this; }
+			Unit& sethp(int h){ hp = h; return *this; }
+			Unit& setlevel(int l){ level = l; return *this; }
+			Unit& setname(std::string str){ name =str; return *this;}
+			Unit& setmax_hp(int mh){ max_hp = mh; return *this;}
+			Unit& setfr(int f){ fr = f; return *this;}
+			Unit();
+			int hit_enem(Unit* enemy);
+			virtual int getcond()const { return 10; }
+			virtual void setcond(int c){ c = 0; }
+			virtual int getexp()const {return 0; }
+			virtual void setexp(int a) {a=0; }
+			virtual std::string gettype()const{ return "";}
+			virtual void create_slaves(){}
 	};
-	class Alive: public Enemy{
+	class Alive: virtual public Unit{
 		int exp;
 		int condition;
 		public:
-			friend class Myself;
-			friend class Undead;
+		//	friend class Myself;
+		//	friend class Undead;
 			Alive();
 			Alive(std::string name, int m, int h, int f, int ex, int c);
-			int getexp()const {return exp;}
-			Alive& setexp(int a){ exp = a; return *this; }
-			int getcond()const {return condition;}
-			Alive& setcond(int c){ condition = c; return *this;}
-			//int hiten(Undead& enem);
-			int hitenem(Alive& enem);
-		//	int wound(Myself& me);
+			int getexp()const override{return exp;}
+			void setexp(int a)override{ exp = a; }
+			int getcond()const override {return condition;}
+			void setcond(int c) override{ condition = c;}
+			//void Die();
 	};
-	class Undead: public Enemy{
+	class Undead: virtual public Unit{
 		std::string type;
 		public:
-			std:: string gettype()const{ return type;}
+			std:: string gettype()const override{ return type;}
 			Undead& settype(std::string t){ type = t; return *this;}
 			Undead(Alive& a, std::string str, int k);
-			int hiten(Undead& enem);
-			int hitenem(Alive& enem);
-			int wounded(Alive& enem);
 			Undead();
-		friend class Myself;
+			//void Die();
 	};
+	class Prizivatel: public Alive, public Undead{
+		int t;
+		std::string slaves_type;
+		public:
+			Prizivatel();
+			std::string getslaves_type(){return slaves_type;};
+			void setslaves_type(std::string str){ slaves_type = str; }
+			void create_slaves() override;
+	};
+	//class Curse{
+	class en{
+		Alive e;
+		en* next;
+		//Iterator It;
+		public:
+			Alive get_e()const { return e;}
+			en& set_e(Alive& a){e = a; return *this;}
+			en* getnext()const {return next; }
+			en& setnext(en* enemy){ next = enemy; return *this;}
+			en(Alive enemy);
+			en(){ next = nullptr;}
+			en& add(Alive enemy);
+			en* begin() { return this; }
+			en* end(){return nullptr;}
+			en& del(int k);
+			Alive operator [](int k);
+	};
+	class Iterator{
+		en* it;
+		public:
+			en* getit()const{ return it;}
+			Iterator();
+			Iterator & operator =(en* enemy);
+			Iterator & operator ++(int a);
+			std::string getname()const { return it->get_e().getname(); }
+			int getmax_hp()const { return it->get_e().getmax_hp(); }
+			int gethp()const{ return it->get_e().gethp();}
+			int gethit()const {return it->get_e().gethit();}
+			int getdamage()const{ return it->get_e().getdamage();}
+			int getfr() const {return it->get_e().getfr();}
+			int getx()const { return it->get_e().getx();}
+			int gety()const { return it->get_e().gety(); }
+			bool operator == (en* enemy);
+			bool operator < (en* enemy);
+			bool operator > (en* enemy);
+			//Alive & operator --(int a);
+	};
+
+	/*class Iterator{
+		en* it;
+		public:
+			Iterator();
+			Iterator & operator =(en ememy);
+			Iterator & operator ++(int a);
+			iterator & operator --(int a);
+	}*/
+
 	struct tab{
 		std::string name;
 		std::string parent;
@@ -75,52 +130,50 @@ namespace Necromancer{
 		std::string name;
 		int c;
 	};
-	class Myself{
+	class Myself: public Unit{
 		private:
 			int exp;
-			int max_hp;
 			int max_mana;
-			int hp;
-			int level;
-			int fr;
 			int mana;
 			//tab* T;
 			std::vector <tab> V;
 			std::vector <tab> :: iterator iter;
 		public:
-			friend class Alive;
-			friend class Undead;
 			Myself();
-			int getexp() const{ return exp; }
-			int getmax_hp() const {return max_hp;}
+			int getexp() const override{ return exp; }
 			int getmax_mana() const {return max_mana;}
-			int gethp() const { return hp;}
-			int getlevel()const { return level;}
-			int getfr()const { return fr;}
 			int getmana()const { return mana; }
 			tab find_in_table(std::string);
 			std::vector <tab> getV()const { return V; }
 			Myself& setV(std::vector <tab> T){V = T; return *this;} 
-			Myself& setmax_hp(){ max_hp=level*2+5; return *this; }
-			Myself& setmax_mana(){max_mana = level*5; return *this; }	
-			Myself& setexp(int a){exp=a; return *this;}
-			Myself& sethp(int a){ hp=a; return *this;}
-			Myself& setlevel(int a){ level = a; return *this;}
+			Myself& setmax_mana(){max_mana = getlevel()*5; return *this; }	
+			void setexp(int a) override{exp=a;}
 			Myself& increase_level();
-			Myself& setfr(int f){ fr = f; return *this;}
-			void hit(Alive& enem);
-			void hit (Undead& enem);
-			int wounded(Alive& en);
-			int wound (Undead& enem);
-			void draining(Alive& enem);
+			int draining(Unit* enem);
 			std::vector <Undead> necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> C);
 			int curse(Alive& enem);
 	};
-	Undead Create_slaves(Alive& en, std::vector <Undead> u);
-	Undead create_slaves(Undead& en, std::vector <Undead> u);
+	class cell{
+		private:
+			int type;
+			Unit* Obj;
+			int who;
+		public:
+			int getwho(){ return who;}
+			cell& setwho(int w){ who = w; return *this; }
+			cell& settype(int t){ type = t; return *this; }
+			int gettype(){ return type; }
+			cell& setObj(Unit* o){ Obj = o; return *this;}
+			Unit* getObj(){ return Obj; }
+			cell& del();
+	};
+	//Undead Create_slaves(Alive& en, std::vector <Undead> u);
+	//Undead create_slaves(Undead& en, std::vector <Undead> u);
 	Myself Readme();
-	Alive* Readfile( int* n);
+	en Readfile( int n, cell Cell[20][20]);
 	std::vector <coef> ReadCoef();
-	std::vector <Undead> ReadUndead();
+	std::vector <Undead> ReadUndead(cell Cell[20][20]);
+	void Paste(Unit* a, int k, int i, int j);
+	std::vector <Prizivatel> ReadPrizivatel(cell Cell[20][20]);
 		
 }

@@ -38,13 +38,13 @@ TEST(Game_functions, results){
 	Alive enemy(str, m, h, f, ex, c);
 	enemy.setdamage(2);
 	enemy.sethit(1);
-	me.wounded(enemy);
+	enemy.hit_enem(&me);
 	ASSERT_EQ(5, me.gethp());
 	ASSERT_EQ(1, enemy.getexp());
-	me.hit(enemy);
+	me.hit_enem(&enemy);
 	ASSERT_EQ(3, enemy.gethp());
 	enemy.sethp(1);
-	me.hit(enemy);
+	me.hit_enem(&enemy);
 	ASSERT_EQ(0, enemy.gethp());
 	ASSERT_EQ(0, enemy.getcond());
 	ASSERT_EQ(4, me.getexp());
@@ -52,21 +52,17 @@ TEST(Game_functions, results){
 	int k = 2;
 	enemy.sethp(3);
 	Undead U(enemy, type, k);
-	me.hit(U);
+	me.hit_enem(&U);
 	ASSERT_EQ(4, U.gethp());
-	U.wounded(enemy);
+	U.hit_enem(&enemy);
 	ASSERT_EQ(2, U.gethp());
 	ASSERT_EQ(2, enemy.getexp());
 	Alive en("Ogr", 6, 6, 3, 3, 1);
 	en.setdamage(2);
 	en.sethit(3);
-	enemy.hitenem(en);
+	enemy.hit_enem(&en);
 	ASSERT_EQ(4, en.gethp());
 	Undead Un(en, "ghost", 3);
-	Un.hiten(U);
-	ASSERT_EQ(Un.gethp(), 4);
-	Un.hitenem(en);
-	ASSERT_EQ(2, en.gethp());
 }
 
 

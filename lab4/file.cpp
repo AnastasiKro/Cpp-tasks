@@ -1,7 +1,35 @@
 #include <iostream>
 #include <fstream>
 #include "lab4.h"
+const int width = 20;
+const int height = 20;
+extern std::vector <Necromancer::Undead> u;
+extern Necromancer::cell Cell[width][height];
 namespace Necromancer{
+	//extern std::vector <Undead> u;
+	void Paste( Unit* a, int k, int i, int j){
+		int s = 0; int x; int y;
+		//std::cout<<"i j "<<i<<" "<<j<<std::endl;
+		do{
+			if (i !=-1){
+				do{
+				 	x = i-4 + rand()%8;
+				 	y = j-4+rand()%8;
+				}while(x<1 || x>width-1 ||y<0 ||y>height-1);
+			}
+			else{
+				x = rand()%width;
+				y = rand()%height;
+			}
+			//std::cout<<"x y "<<x<<" "<<y<<std::endl;
+			if (Cell[y][x].getObj() == nullptr&& Cell[y][x].gettype()==0){
+				Cell[y][x].setObj(a);
+				Cell[y][x].setwho(k);
+				s = 1;
+			}
+		}while (s == 0);
+	}
+
 	Myself Readme(){
 		Myself me;
 
@@ -14,12 +42,9 @@ namespace Necromancer{
 			me.setexp(atoi(line));
 			in.getline(line, 3);
 			me.setlevel(atoi(line));
-		//	in.getline(line);
-		//	me.setx(atoi(line));
-		//	in.getline(line, 3);
-		//	me.sety(atoi(line));
 			in.getline(line, 3);
 			me.setfr(atoi(line));
+			me.setdamage(me.getlevel());
 			while (!in.eof()){
 				tab t1;
 				in.getline(str, 20);
@@ -77,16 +102,16 @@ namespace Necromancer{
 		}
 		return c;
 	}
-	std::vector <Undead> ReadUndead(){
+	std::vector <Undead> ReadUndead(cell Cell[20][20]){
 		char line[10];
-		std::vector <Undead> u;
+		//std::vector <Undead> u;
 		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/Undead");
 		if (in.is_open()){
 			while(!in.eof()){
 				in.getline(line, 10);
 				if(in.eof())
 					break;
-				Undead U;
+				Undead U ;
 				U.setname(line);
 				in.getline(line, 10);
 				U.settype(line);
@@ -97,65 +122,89 @@ namespace Necromancer{
 				in.getline(line, 10);
 				U.setdamage(atoi(line));
 				in.getline(line, 10);
-				U.sethit(atoi(line));
-				in.getline(line, 10);
 				U.setfr(atoi(line));
-				in.getline(line, 2);
-				U.setPr(atoi(line));
 				u.push_back(U);
+				//Paste(&U, Cell);
 		}
 			in.close();
 		}
+		for (int i = 0; i<u.size(); i++){
+			Paste(&(u[i]), 3, -1, -1);
+		}
 		return u;
 	}
-
-		
-Alive* Readfile( int* n){
+std::vector <Prizivatel> ReadPrizivatel(cell Cell[20][20]){
+		char line[10];
+		std::vector <Prizivatel> p;
+		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/Prizivately");
+		if (in.is_open()){
+			while(!in.eof()){
+				in.getline(line, 10);
+				if(in.eof())
+					break;
+				Prizivatel P ;
+				P.settype(line);
+				in.getline(line, 10);
+				P.setname(line);
+				in.getline(line, 10);
+				P.setslaves_type(line);
+				in.getline(line, 10);
+				P.setmax_hp(atoi(line));
+				in.getline(line, 10);
+				P.sethp(atoi(line));
+				in.getline(line, 10);
+				P.setdamage(atoi(line));
+				in.getline(line, 10);
+				P.setfr(atoi(line));
+				p.push_back(P);
+				//Paste(&U, Cell);
+		}
+			in.close();
+		}
+		for (int i = 0; i<p.size(); i++){
+			Paste(&(p[i]), 4, -1, -1);
+			}
+		return p;
+	}
+en Readfile( int n, cell Cell[20][20]){
 	char line[10];
-	Alive* e;
+	char m[3];
+	en* enemy = new en;
 		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/enemies");
 	if (in.is_open()){
 		while (!in.eof()){
+			Alive* a = new Alive;
 			in.getline(line, 10);
 			if (in.eof())
 				break;
-			char* m = new char[3];
 			in.getline(m, 3);
+		//	std::cout<<m<<std::endl;
 			if (in.eof())
 				break;
-			*n+=1;
-			Alive* ee = new Alive[*n];
-			for (int i = 0; i<*n-1; i++)
-				ee[i]=e[i];
-			ee[*n-1].setname(line);
-			ee[*n-1].setmax_hp(atoi(m));
-			//if (in.eof())
-			//	break;
+			n+=1;
+			a->setname(line);
+			//std::cout<<n<<" "<<line<<std::endl;
+			a->setmax_hp(atoi(m));
 			in.getline(m,3);
-			ee[*n-1].sethp(atoi(m));
+			a->sethp(atoi(m));
 			in.getline(m, 3);
-			ee[*n-1].setexp(atoi(m));
+			a->setexp(atoi(m));
 			in.getline(m, 3);
-			ee[*n-1].setfr(atoi(m));
+			a->setfr(atoi(m));
 			in.getline(m, 3);
-			ee[*n-1].setdamage(atoi(m));
-			in.getline(m, 3);
-			ee[*n-1].sethit(atoi(m));
-			ee[*n-1].setx(rand()%20);
-			ee[*n-1].sety(rand()%20);
-			ee[*n-1].setcond(1);
-			in.getline(m, 3);
-			ee[*n-1].setPr(atoi(m));
-			in.getline(line, 10);
-			ee[*n-1].setslaves_type(line);
-			if (*n>2)
-				delete[] e;
-			delete[] m;
-			e = ee;
+			a->setdamage(atoi(m));
+			a->setx(rand()%20);
+			a->sety(rand()%20);
+			a->setcond(1);
+			Paste(a, 2, -1, -1);
+			if (n == 1){
+				delete enemy;
+				en* enemy = new en(*a);
+			}
+			else
+				enemy->add(*a);	
 		}
 	}
 	in.close();
-	return e;
-}
-
-}
+	return *enemy;
+}}

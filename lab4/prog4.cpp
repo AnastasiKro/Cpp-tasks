@@ -2,124 +2,12 @@
 #include <ncurses.h>
 #include <cstring>
 #include <iostream>
+std::vector <Necromancer::Undead> u;
+const int width = 20;
+const int height = 20;
+Necromancer::cell Cell[width][height];
 namespace Necromancer{
-	//template <class T>
-	//Myself& Myself::setmax(){
-		//if (level == 1){
-			//max_hp = 7;
-
-	void Myself::draining(Alive& enem){
-		//std::cout<<
-		//printw("Enemy is dead, input 1 to turn him into health; 2 to turn him into mana");//<<std::endl;
-		//int n = getch();
-		//if (n == '2'){
-		//	mana+=enem.getexp();
-		int k;
-		for(iter=V.begin(); iter <V.end(); iter++){
-			if (iter->name == "draining")
-				k = iter->charact;
-		}
-		/*enem.sethp(enem.gethp()-enem.gethit());
-		if (enem.gethp()<=0){
-			enem.setcond(0);*/
-		int f = 0;
-		if (enem.getcond() == 0){
-			while (f == 0){
-				mvwprintw(stdscr, 25, 0, "enemy is dead, press 1 to turn his exp into hp, 2 - into mana");
-				switch(getch()){
-					case '1':
-						hp+=k+enem.getexp();
-						f = 1;
-						if (hp>max_hp)
-							hp = max_hp;
-						break;
-					case '2':
-						mana+=k+enem.getexp();
-						f = 1;
-						if(mana>max_mana)
-							mana=max_mana;
-						break;
-				}
-			}
-			exp+=k;
-			if (exp>5){
-				increase_level();
-				exp=1;
-			}
-			enem.setx(-10);
-			enem.sety(-10);
-		}
-	}
-	int Myself::wounded(Alive& en){
-		en.exp+=1;
-		hp-=en.getdamage();
-		if (hp <=0)
-			return 0;
-		return 1;
-	}
-	void Myself::hit(Alive& enem){
-		enem.sethp(enem.gethp()-1);
-		exp+=1;
-		if (enem.gethp()<=0){
-			enem.setcond(0);
-			enem.sethp(0);
-			exp+=2;
-		} 
-		if (exp>5)
-			increase_level();
-	}
-	void Myself::hit(Undead& enem){
-		enem.sethp(enem.gethp()-1);
-	//	exp+=1;
-		if (enem.gethp()<=0){
-			enem.setx(-10); enem.sety(-10);
-			exp+=2;
-			enem.sethp(0);
-		}
-		if (exp>5)
-			increase_level();
-       	}	
-	Myself& Myself::increase_level(){
-		level++;
-		exp = 1;
-		int f = 0;
-		while(f == 0){
-			mvwprintw(stdscr, 25, 0, "press 1 to encrease draining level, 2 to make next undead available");
-			
-			switch(getch()){
-				case '1':
-
-					for(iter= V.begin(); iter< V.end(); iter++){
-						if (iter->name == "draining")
-							iter->charact++;
-					}
-					return *this;
-					break;
-
-				case '2':
-					for(iter = V.begin(); iter<V.end(); iter++){
-				 		if (iter->charact == 0){
-							if (iter->parent == ""){
-								iter->charact = 1;
-								return *this; }
-							else{
-								std::vector <tab> :: iterator i;
-								for (i = V.begin(); i<V.end(); i++){
-									if (i->name == iter->parent){
-										if (i->charact == 1){
-										iter->charact = 1;
-										return *this; }
-									}
-								}
-							}
-						}
-					}
-					break;
-			}
-		}
-	return *this;
-	}
-
+	//std::vector <Undead> u;
 	Alive::Alive(){
 		setname("");
 		setmax_hp(0);
@@ -131,24 +19,13 @@ namespace Necromancer{
 		setmax_hp(m);
 		sethp(h);
 		setfr(f);
-		exp= ex;
-		condition = 1;
-	}
-	Undead::Undead(Alive& enem, std::string c, int k){
-		setname(enem.getname());
-		setmax_hp(enem.getmax_hp());
-		sethp(getmax_hp());
-		setx(enem.getx());
-		sety(enem.gety());
-		setdamage((enem.getdamage()+k)/2);
-		sethit(enem.gethit());
-		setfr(1);
-		type = c;
+		setexp(ex);
+		setcond(1);
 	}
 	std::vector <tab> CreateTable(){
 		std::vector <tab> T;
 	tab t1;
-	t1.name = "draining";
+	t1.name="draining";
 	t1.parent = "";
 	t1.mana = 0;
 	t1.charact = 1;//level of draining
@@ -185,64 +62,66 @@ namespace Necromancer{
 	T.push_back(t6);
 	return T;
 }
+	Unit::Unit(){
+		setx(rand()%20);
+		sety(rand()%20);
+	}
+	int Unit::hit_enem(Unit* enem){
+		if (getfr() == enem->getfr())
+			return 1;
+		enem->sethp(enem->gethp()-getdamage());
+		//exp+=1;
+		if (enem->gethp()<=0){
+			enem->sethp(0);
+			if (enem->getcond()!=10){
+				enem->setcond(0);
+				return 2;
+			}
+			return 0;
+		}
+		return 1;
+	}
 	Undead::Undead(){
 		setx(rand()%20);
 		sety(rand()%20);
 	}
+	Undead::Undead(Alive& enem, std::string c, int k){
+		setname(enem.getname());
+		setmax_hp(enem.getmax_hp());
+		sethp(getmax_hp());
+		setx(enem.getx());
+		sety(enem.gety());
+		setdamage((enem.getdamage()+k)/2);
+		sethit(enem.gethit());
+		setfr(1);
+		type = c;
+	}
+	Prizivatel::Prizivatel(){
+		setx(rand()%20);
+		sety(rand()%20);
+	}
+	void Prizivatel::create_slaves(){
+		Undead U;
+		U.settype(getslaves_type());
+		U.setmax_hp(rand()%5+1);
+		U.sethp(getmax_hp());
+		U.setname(getname());
+		//U.setx(getx()+rand()%4+1);
+		//U.sety(gety()+rand()%4+1);
+		U.setfr(getfr());
+		u.push_back(U);
+		Paste(&(u[u.size()-1]),  3, getx(), gety());
+	}
 	Myself::Myself(){
-		exp = 0;
-		hp = 7;
-		level = 1;
+		setexp(0);
+		sethp(7);
+		setlevel(1);
 		mana = 0;
-		fr = 1;
-		max_hp = level*2+5;
-		max_mana = level*5+10;
+		setfr(1);
+		setmax_hp(getlevel()*2+5);
+		max_mana = getlevel()*5+10;
 		V = CreateTable();
 	}
-	//template <class T>
-	int Alive::hitenem(Alive& enem){
-		enem.sethp(enem.gethp()-getdamage());
-		exp+=1;
-		if (enem.gethp()<=0){
-			enem.sethp(0);
-			enem.setcond(0);
-			return 0;
-		}
-		return 1;
-	}
-	int Undead::wounded(Alive& enem){
-		sethp(gethp()-enem.getdamage());
-		enem.setexp(enem.getexp()+1);
-		if (gethp()<=0){
-			setx(-10);
-			sety(-10);
-			return 0;
-		}
-		return 1;
-	}
-	int Myself::wound(Undead& enem){
-		hp-=enem.getdamage();
-		if (hp<=0)
-			return 0;
-		return 1;
-	}
-	int Undead::hiten(Undead& enem){
-		sethp(gethp()-enem.getdamage());
-		if (gethp()<=0){
-			setx(-10); sety(-10); }
-		return 0;
-	}
-	int Undead::hitenem(Alive& enem){
-		enem.sethp(enem.gethp()-getdamage());
-		if (enem.gethp()<=0){
-			enem.setcond(0);
-			enem.sethp(0);
-		}
-		return 0;
-	}
-
-
-
 	tab Myself::find_in_table(std::string str){
 		for (iter = V.begin(); iter<V.end(); iter++){
 			if (iter->name == str){
@@ -250,21 +129,6 @@ namespace Necromancer{
 		}
 		//return nullptr;
 	}
-	/*void Myself::spoilage(Alive& enem){
-		enem.setdamage(enem.getdamage()-1);
-		if (enem.getdamage()<0)
-			enem.setdamage(0);
-	}
-	void Myself::pain(Alive& enem){
-		enem.setdamage(enem.getdamage()-2);
-		if (enem.getdamage()<0)
-			enem.setdamage(0);
-	}
-	void Myself::pain(Alive& enem){
-		enem.setdamage(enem.getdamage()-4);
-		if (enem.getdamage()<0)
-			enem.setdamage(0);
-	}*/
 	int Myself::curse(Alive& enem){
 		int f = 0;
 		tab t;
@@ -357,29 +221,46 @@ namespace Necromancer{
 		}
 		return 0;
 	}
-	Undead Create_slaves(Alive& en, std::vector <Undead> u ){
-		Undead U;
-		U.settype(en.getslaves_type());
-		U.setmax_hp(rand()%5+1);
-		U.sethp(en.getmax_hp());
-		U.setname(en.getname());
-		U.setx(en.getx()+rand()%4+1);
-		U.sety(en.gety()+rand()%4+1);
-		U.setfr(en.getfr());
-		//u.push_back(U);
-		return U;
-	}
-	Undead create_slaves(Undead& en, std::vector <Undead> u){
-		Undead U;
-		U.settype(en.gettype());
-		U.setmax_hp(rand()%5+1);
-		U.sethp(en.getmax_hp());
-		U.setname(en.getname());
-		U.setfr(en.getfr());
-		U.setx(en.getx()+rand()%4+1);
-		U.sety(en.gety()+rand()%4+1);	
-		//u.push_back(U);
-		return U;
+	Myself& Myself::increase_level(){
+		setlevel(getlevel()+1);
+		setdamage(getlevel());
+		exp = 1;
+		int f = 0;
+		while(f == 0){
+			mvwprintw(stdscr, 25, 0, "press 1 to encrease draining level, 2 to make next undead available");
+			
+			switch(getch()){
+				case '1':
+
+					for(iter= V.begin(); iter< V.end(); iter++){
+						if (iter->name == "draining")
+							iter->charact++;
+					}
+					return *this;
+					break;
+
+				case '2':
+					for(iter = V.begin(); iter<V.end(); iter++){
+				 		if (iter->charact == 0){
+							if (iter->parent == ""){
+								iter->charact = 1;
+								return *this; }
+							else{
+								std::vector <tab> :: iterator i;
+								for (i = V.begin(); i<V.end(); i++){
+									if (i->name == iter->parent){
+										if (i->charact == 1){
+										iter->charact = 1;
+										return *this; }
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+	return *this;
 	}
 	std::vector <Undead> Myself::necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> co){
 		std::string type;
@@ -411,5 +292,44 @@ namespace Necromancer{
 		exp+=3;
 		//delete &enem;
 		return u;
+	}
+	int Myself::draining(Unit* enem){
+		int k;
+		for(iter=V.begin(); iter <V.end(); iter++){
+			if (iter->name == "draining")
+				k = iter->charact;
+		}
+		int f = 0;
+		if (enem->getcond() == 0){
+			while (f == 0){
+				mvwprintw(stdscr, 25, 0, "enemy is dead, press 1 to turn his exp into hp, 2 - into mana");
+				switch(getch()){
+					case '1':
+						sethp(gethp()+k+enem->getexp());
+						f = 1;
+						if (gethp()>getmax_hp())
+							sethp(getmax_hp());
+						break;
+					case '2':
+						mana+=k+enem->getexp();
+						f = 1;
+						if(mana>max_mana)
+							mana=max_mana;
+						break;
+				}
+			}
+			exp+=k;
+			if (exp>5){
+				increase_level();
+				exp=1;
+			}
+			return 0;
+		}
+		return 1;
+	}
+	cell& cell::del(){
+		setwho(0);
+		setObj(nullptr);
+		return *this;
 	}
 }	
