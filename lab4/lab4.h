@@ -1,5 +1,7 @@
 #include <string>
 #include <vector>
+#include "ContClass.h"
+
 namespace Necromancer{
 	class Unit{
 		private:
@@ -38,88 +40,44 @@ namespace Necromancer{
 			virtual int getexp()const {return 0; }
 			virtual void setexp(int a) {a=0; }
 			virtual std::string gettype()const{ return "";}
-			virtual void create_slaves(){}
+			virtual Unit* Create(){return nullptr;}
 	};
-	class Alive: virtual public Unit{
+	class Alive: public Unit{
 		int exp;
 		int condition;
 		public:
-		//	friend class Myself;
-		//	friend class Undead;
 			Alive();
 			Alive(std::string name, int m, int h, int f, int ex, int c);
 			int getexp()const override{return exp;}
 			void setexp(int a)override{ exp = a; }
 			int getcond()const override {return condition;}
 			void setcond(int c) override{ condition = c;}
-			//void Die();
 	};
-	class Undead: virtual public Unit{
+	class Undead: public Unit{
 		std::string type;
 		public:
 			std:: string gettype()const override{ return type;}
 			Undead& settype(std::string t){ type = t; return *this;}
 			Undead(Alive& a, std::string str, int k);
 			Undead();
-			//void Die();
 	};
-	class Prizivatel: public Alive, public Undead{
-		int t;
+	class Summoner{
 		std::string slaves_type;
 		public:
-			Prizivatel();
 			std::string getslaves_type(){return slaves_type;};
 			void setslaves_type(std::string str){ slaves_type = str; }
-			void create_slaves() override;
+			Undead* create_slaves();
 	};
-	//class Curse{
-	class en{
-		Alive e;
-		en* next;
-		//Iterator It;
+	class Summoner_Alive: public Alive, public Summoner{
 		public:
-			Alive get_e()const { return e;}
-			en& set_e(Alive& a){e = a; return *this;}
-			en* getnext()const {return next; }
-			en& setnext(en* enemy){ next = enemy; return *this;}
-			en(Alive enemy);
-			en(){ next = nullptr;}
-			en& add(Alive enemy);
-			en* begin() { return this; }
-			en* end(){return nullptr;}
-			en& del(int k);
-			Alive operator [](int k);
+			Summoner_Alive(std::string S, Unit P);
+			Unit* Create() override;
 	};
-	class Iterator{
-		en* it;
+	class Summoner_Undead: public Undead, public Summoner{
 		public:
-			en* getit()const{ return it;}
-			Iterator();
-			Iterator & operator =(en* enemy);
-			Iterator & operator ++(int a);
-			std::string getname()const { return it->get_e().getname(); }
-			int getmax_hp()const { return it->get_e().getmax_hp(); }
-			int gethp()const{ return it->get_e().gethp();}
-			int gethit()const {return it->get_e().gethit();}
-			int getdamage()const{ return it->get_e().getdamage();}
-			int getfr() const {return it->get_e().getfr();}
-			int getx()const { return it->get_e().getx();}
-			int gety()const { return it->get_e().gety(); }
-			bool operator == (en* enemy);
-			bool operator < (en* enemy);
-			bool operator > (en* enemy);
-			//Alive & operator --(int a);
+			Summoner_Undead(std::string S, Unit P, std::string type);
+			Unit* Create() override;
 	};
-
-	/*class Iterator{
-		en* it;
-		public:
-			Iterator();
-			Iterator & operator =(en ememy);
-			Iterator & operator ++(int a);
-			iterator & operator --(int a);
-	}*/
-
 	struct tab{
 		std::string name;
 		std::string parent;
@@ -146,12 +104,25 @@ namespace Necromancer{
 			tab find_in_table(std::string);
 			std::vector <tab> getV()const { return V; }
 			Myself& setV(std::vector <tab> T){V = T; return *this;} 
-			Myself& setmax_mana(){max_mana = getlevel()*5; return *this; }	
-			void setexp(int a) override{exp=a;}
+			Myself& setmax_mana(){max_mana = getlevel()*5; return *this; }
+			Myself& setmana(int m){ mana = m; return *this;}	
+			void setexp(int a) override{exp=a; increase_level();}
 			Myself& increase_level();
 			int draining(Unit* enem);
 			std::vector <Undead> necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> C);
 			int curse(Alive& enem);
+	};
+	class Curse{
+		char c;
+		public:
+			Curse(){ c=0;}
+			int spoilage(Unit* enem, Myself& me);
+			int pain(Unit* enem, Myself& me);
+			int agony(Unit* enem, Myself& me);
+			int exhastion(Unit* enem, Myself& me);
+			int rot(Unit* enem, Myself& me);
+			int desecration(Unit* enem, Myself& me);
+			int madness(Unit* enem, Myself& me);
 	};
 	class cell{
 		private:
@@ -167,13 +138,55 @@ namespace Necromancer{
 			Unit* getObj(){ return Obj; }
 			cell& del();
 	};
-	//Undead Create_slaves(Alive& en, std::vector <Undead> u);
-	//Undead create_slaves(Undead& en, std::vector <Undead> u);
-	Myself Readme();
-	en Readfile( int n, cell Cell[20][20]);
-	std::vector <coef> ReadCoef();
-	std::vector <Undead> ReadUndead(cell Cell[20][20]);
-	void Paste(Unit* a, int k, int i, int j);
-	std::vector <Prizivatel> ReadPrizivatel(cell Cell[20][20]);
+	class Game{
+		private:
+			//const int height=20;
+			//const int width=20;
+			int level;
+			std::vector <Undead> u;
+			std::vector <coef> C;
+			std::vector <Summoner_Alive> SA;
+			std::vector <Summoner_Undead> SU;
+			Myself me;
+			MyClass::en <Alive> e;
+		//	cell Cell[20][20];
+			bool gameOver;
+		public:
+			cell Cell[21][21];
+			int x;
+			int y;
+			int P(int x);
+			int D(int d);
+			bool getgameOver()const{ return gameOver;}
+			void setgameOver(bool g){ gameOver = g;}
+			Game& setme(Myself& Me){ me = Me; return *this; }
+			Myself& getme() { return me; }
+			Myself Readme();
+			std::vector <Undead> getu()const { return u;}
+			MyClass::en <Alive> gete()const { return e;}
+			int getlevel()const{ return level; }
+			Game& setlevel(int l) { level = l; return *this;}
+			Game& set_u(std::vector <Undead> U){ u = U; return *this; }
+			Game& set_e(MyClass::en <Alive> E){ e = E; return *this;}
+			std::vector <Undead> ReadUndead();
+			std::vector <coef> ReadCoef();
+			MyClass::en <Alive> ReadAlive();
+			void Paste(Unit* a, int k, int i, int j);
+			void ReadSummoner();
+			Game();
+			void SetUp();
+			void MoveMe(int x1, int y1, int x2, int y2);
+			void enemy_attack();
+			void Summoner_attack();
+			void Draining();
+			void Attack();
+			//cell*[20] getCell()const {return Cell;}
+			void goleft();
+			void goright();
+			void goUp();
+			void godown();
+			void Die(int k, int l);
+			void curse(int a);
+	};
 		
 }
