@@ -7,12 +7,9 @@
 #include <cstdlib>
 #include <vector>
 using namespace Necromancer;
-//bool gameOver;
 const int width=20;
 const int height=20;
 int x, y;
-//std::vector <tab> T;
-//std::vector <tab> :: iterator iter;
 
 void Draw(Game G){
 	//cell** Cell = G.getCell();
@@ -60,14 +57,9 @@ void Draw(Game G){
 				Unit* it = G.Cell[i][j].getObj();
 				printw(" %s, hp: %d, damage:%d, fraction: %d",  it->getname().c_str(), it->gethp(), it->getdamage(),it->getfr());
 			}
-		//	if (j==0 || j == width-1){
-		//		printw("#");
-		//	}
 		}
 		printw("\n");
 	}
-	//for(int i = 0; i<width+1; i++)
-	//	printw("#");
 	printw("\n");
 }
 
@@ -100,30 +92,6 @@ void Input( Game& G){
 			case 'b': 
 				G.Attack();
 				break;
-			/*case 's':
-				for (int i = 0; i<n; i++){
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					u =me.necromancy(e[i], 's', u, C);
-				}}	
-				break;
-			case 'g':
-				for (int i = 0; i<n; i++){
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					u =me.necromancy(e[i], 'g', u, C);
-				}}
-				break;
-			case 'f':
-				for (int i = 0; i<n; i++){
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					u =me.necromancy(e[i], 'f', u, C);
-				}}
-				break;
-			case 'z':
-				for (int i = 0; i<n; i++){
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					u =me.necromancy(e[i], 'z', u, C);
-				}}
-				break;*/
 			case 'c':{
 				char a = 0; 
 				int f = 0;
@@ -136,37 +104,31 @@ void Input( Game& G){
 				}
 				G.curse(a);
 				break;}
+			case 'n':{
+					 int f = 0; char a = 0;
+					 while (f ==0){
+						 mvwprintw(stdscr, 25, 0, "Choose the undead: s - skeleton, g - gul, h - ghost, p - phantom, z - zombie");
+						 a = getch();
+						 if (a == 's' || a == 'p'||a == 'z'||a=='h'||a =='g')
+							 f = 1;
+					 }
+					 G.necromancy(a);
+					 break;
+				 }
 			case 'x':
-				//std::cout<<"no"<<std::endl;
 				G.setgameOver(true);
 				break;
-			/*case 'p':
-				for (int i = 0; i<n; i++){
-				if (e[i].getx() <x+3 && e[i].getx()>x-3&&e[i].gety()<y+3 && e[i].gety()>y-3){
-					u =me.necromancy(e[i], 'p', u, C);
-				}}
-				break;*/
 			default:
 				G.enemy_attack();
 				G.Summoner_attack();
 				break;
 		}
-}
-/*int printv(Myself me){
+}/*
+int printv(Myself me){
 	std::vector <tab> T = me.getV();
 	std::vector <tab> :: iterator iter; 
 	for (iter = T.begin(); iter<T.end(); iter++){
 		std::cout<<iter->name<<" "<<iter->parent<<" "<< iter->mana<<" "<<iter->charact<<std::endl;
-	}
-	return 0;
-}
-int printenu(){
-	for (it = u.begin(); it<u.end(); it++){
-		std::cout<<it->getname()<<std::endl;
-		std::cout<<" "<<it->getx()<<" "<<it->gety()<<std::endl;
-		//printw("%s", e[i].getname());
-		//printw("\n%d\n", e[i].getx());
-		//printw("%d\n", e[i].gety());
 	}
 	return 0;
 }
@@ -184,28 +146,45 @@ int printCell(Game G){
 int main(){
 	Game G;
 	G.SetUp();
-	//gameOver = false;
 	initscr();
 	cbreak();
 	noecho();
 	scrollok(stdscr, TRUE);
 	nodelay(stdscr, TRUE);
+	int f = 0; char a = 0; std::string str;
 	G.ReadCoef();
-	G.ReadSummoner();
-       	G.ReadAlive();
-	G.ReadUndead();
-	G.Readme();
-	//me.setname("me");
-	//Cell[0][width/2].setObj(&me);
+	std::string s1= "/home/avtobus/3sem/lab2/3sem/lab4/";	
+	//std::cout<<"If you want to start a new game, input 1, to resume, input 2\n";
+	while (f==0){
+		
+		mvwprintw(stdscr, 1, 1,"If you want to start a new game, input 1, to resume, input 2\n");
+		a = getch();
+		if (a == '1'){
+			f =1;
+			str= "config/";
+		}
+		if (a == '2'){
+			f = 2;
+			str = "mygame/";
+		}
+	}
+	G.ReadSummoner(s1+str+"Summoners");
+       	G.ReadAlive(s1+str+"Alive");
+	G.ReadUndead(s1+str+"Undead");
+	G.Readme(s1+str+"Myself");
 	while (G.getgameOver()!= true){
-	//	printen(e, n);
 		Draw(G);
 		Input(G);
 	}
 	endwin();
+	printv(G.getme());
+	if (G.getme().gethp()!=0){
+	G.WriteUndead();
+	G.WriteAlive();
+	G.Writeme();
+	G.WriteSummoners();}
 	//printv(me);
 	//printCell(G);
-	//printenu();
 	return 0;
 }
 

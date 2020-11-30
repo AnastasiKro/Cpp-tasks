@@ -47,7 +47,7 @@ namespace Necromancer{
 						if (Cell[k][l].getwho()>0&& (k!=i || l!=j)){
 							Unit* r = Cell[k][l].getObj();
 							int a = rand()%10000;
-							if ((a !=0) ||(Cell[k][l].getObj()->getfr() == Cell[i][j].getObj()->getfr()))
+							if (a!=0)
 								break;
 							//std::cout<<Cell[i][j].getObj()->getname()<<i<<j<<" "<<k<<l<<std::endl;
 							//std::cout<<Cell[k][l].getObj()->getname()<<std::endl;
@@ -71,6 +71,9 @@ namespace Necromancer{
 		if(Cell[k][l].getwho() == 1)
 			gameOver = true;
 		if ((Cell[k][l].getwho() == 3) || (Cell[k][l].getwho()==5)){
+			Unit* U =Cell[k][l].getObj();
+			*U = u[u.size()-1];
+			u.pop_back();
 			Cell[k][l].del();
 		}
 	}
@@ -138,7 +141,45 @@ namespace Necromancer{
 					MoveMe(x, y+1, x, y);
 		}
 	}
-	void Game::curse(int a){
+	int Game::necromancy(char a){
+		std::string type;
+		switch(a){
+			case 's':
+				type = "skeleton";
+				break;
+			case 'g':
+				type = "gul";
+				break;
+			case 'h':
+				type = "ghost";
+				break;
+			case 'z':
+				type = "zombie";
+				break;
+		}
+		tab t = me.find_in_table(type);
+		if (t.charact == 0 || t.mana>me.getmana())
+			return 0;
+		me.setmana(me.getmana()-t.mana);
+		me.setexp(me.getexp()+2);
+		for (int i = P(y); i<D(y); i++){
+			for (int j=P(x); j<D(x); j++){
+				if ((Cell[i][j].getwho() ==2)|| (Cell[i][j].getwho()==4)){
+					Unit* enem = Cell[i][j].getObj();
+					enem->setcond(0);
+					int k = findc(type);
+					Undead U(enem, type, k);
+					u.push_back(U);
+					Cell[i][j].setwho(3);
+					Cell[i][j].setObj(&(u[u.size()-1]));
+				}
+			}
+		}
+		return 0;
+	}
+
+
+	void Game::curse(char a){
 		Curse Cur;
 		for (int i = P(y); i<D(y); i++){
 			for (int j = P(x); j<D(x); j++){
@@ -187,4 +228,13 @@ int Game::D(int r){
 	if (r<18)
 		return r +3;
 }
+int Game::findc( std::string type){
+		std::vector <coef> :: iterator it;
+		int k=0;
+		for (it = C.begin(); it<C.end(); it++){
+			if (type == it->name)
+				k = it->c;
+		}
+		return k;
+	}
 }

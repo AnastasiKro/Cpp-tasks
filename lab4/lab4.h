@@ -58,7 +58,7 @@ namespace Necromancer{
 		public:
 			std:: string gettype()const override{ return type;}
 			Undead& settype(std::string t){ type = t; return *this;}
-			Undead(Alive& a, std::string str, int k);
+			Undead(Unit* a, std::string str, int k);
 			Undead();
 	};
 	class Summoner{
@@ -109,8 +109,8 @@ namespace Necromancer{
 			void setexp(int a) override{exp=a; increase_level();}
 			Myself& increase_level();
 			int draining(Unit* enem);
-			std::vector <Undead> necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> C);
-			int curse(Alive& enem);
+			//std::vector <Undead> necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> C);
+			//int curse(Alive& enem);
 	};
 	class Curse{
 		char c;
@@ -161,18 +161,19 @@ namespace Necromancer{
 			void setgameOver(bool g){ gameOver = g;}
 			Game& setme(Myself& Me){ me = Me; return *this; }
 			Myself& getme() { return me; }
-			Myself Readme();
+			void Readme(std::string str);
 			std::vector <Undead> getu()const { return u;}
 			MyClass::en <Alive> gete()const { return e;}
 			int getlevel()const{ return level; }
 			Game& setlevel(int l) { level = l; return *this;}
 			Game& set_u(std::vector <Undead> U){ u = U; return *this; }
 			Game& set_e(MyClass::en <Alive> E){ e = E; return *this;}
-			std::vector <Undead> ReadUndead();
-			std::vector <coef> ReadCoef();
-			MyClass::en <Alive> ReadAlive();
+			void ReadUndead(std::string str);
+			void ReadCoef();
+			int findc(std::string str);
+			void ReadAlive(std::string str);
 			void Paste(Unit* a, int k, int i, int j);
-			void ReadSummoner();
+			void ReadSummoner(std::string str);
 			Game();
 			void SetUp();
 			void MoveMe(int x1, int y1, int x2, int y2);
@@ -186,7 +187,12 @@ namespace Necromancer{
 			void goUp();
 			void godown();
 			void Die(int k, int l);
-			void curse(int a);
+			void curse(char a);
+			int necromancy(char c);
+			void WriteUndead();
+			void WriteAlive();
+			void Writeme();
+			void WriteSummoners();
 	};
 		
 }

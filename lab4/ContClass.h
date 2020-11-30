@@ -3,23 +3,23 @@
 namespace MyClass{
 template <class T>
 	class en{
-		T e;
+		T* e;
 		en* next;
 		int size;
 		//Iterator It;
 		public:
 			int Size()const { return size;}
-			T get_e()const { return e;}
+			T* get_e()const { return e;}
 			en& set_e(T& a){e = a; return *this;}
 			en* getnext()const {return next; }
 			en& setnext(en* enemy){ next = enemy; return *this;}
-			en(T enemy);
+			en(T* enemy);
 			en(){ size = 0;next = nullptr;}
-			en& add(T enemy);
+			en& add(T* enemy);
 			en* begin() { return this; }
 			en* end(){return nullptr;}
 			en& del(int k);
-			T operator [](int k);
+			T* operator [](int k);
 	};
 template <class T>
 	class Iterator{
@@ -29,14 +29,6 @@ template <class T>
 			Iterator();
 			Iterator<T> & operator =(en<T>* enemy);
 			Iterator & operator ++(int a);
-		//	std::string getname()const { return it->get_e().getname(); }
-		//	int getmax_hp()const { return it->get_e().getmax_hp(); }
-		//	int gethp()const{ return it->get_e().gethp();}
-		//	int gethit()const {return it->get_e().gethit();}
-		//	int getdamage()const{ return it->get_e().getdamage();}
-		//	int getfr() const {return it->get_e().getfr();}
-		//	int getx()const { return it->get_e().getx();}
-		//	int gety()const { return it->get_e().gety(); }
 			bool operator == (en<T>* enemy);
 			bool operator < (en<T>* enemy);
 			bool operator > (en<T>* enemy);
@@ -69,7 +61,7 @@ template <class T>
 		return (it==enemy);
 	}
 		template <class T>
-	en<T>::en(T enemy){
+	en<T>::en(T* enemy){
 		size = 1;
 		e = enemy;
 		next = nullptr;
@@ -97,7 +89,7 @@ template <class T>
 	}
 
 	template <class T>
-	en<T>& en<T>::add(T enemy){
+	en<T>& en<T>::add(T* enemy){
 		en<T>* N = begin();
 		if (size == 0){
 			e = enemy;
@@ -112,7 +104,7 @@ template <class T>
 		return *this;
 	}
 	template <class T>
-	T en<T>::operator[](int k){
+	T* en<T>::operator[](int k){
 		en<T>* enemy = this;
 		for (int i = 0; i<k; i++){
 			if ( enemy->getnext()== nullptr)

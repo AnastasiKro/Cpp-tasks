@@ -32,13 +32,12 @@ namespace Necromancer{
 		}while (s == 0);
 	}
 
-	Myself Game::Readme(){
+	void Game::Readme(std::string s1){
 		Myself Me;
-
 		char line[3];
 		char str[20];
 		std::vector <tab> T;
-		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/myself");
+		std::ifstream in(s1);//"/home/avtobus/3sem/lab2/3sem/lab4/config/myself");
 		if (in.is_open()){
 			in.getline(line, 3);
 			Me.setexp(atoi(line));
@@ -64,7 +63,7 @@ namespace Necromancer{
 			}
 			in.close();
 		}
-		std::ifstream inn("/home/avtobus/3sem/lab2/3sem/lab4/config/Curses");
+		/*std::ifstream inn("/home/avtobus/3sem/lab2/3sem/lab4/config/Curses");
 		if (inn.is_open()){
 			while (!inn.eof()){
 				inn.getline(str, 20);
@@ -82,13 +81,11 @@ namespace Necromancer{
 				Me.setV(T);
 			}
 			inn.close();
-		}
+		}*/
 		Me.setname("me");
 		setme(Me);
-		//Paste(&me, 1, -1, -1);
-		return me;
 	}
-	std::vector <coef> Game::ReadCoef(){
+	void Game::ReadCoef(){
 		char line[10];
 		//std::vector <coef> c;
 		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/coefficient");
@@ -105,12 +102,11 @@ namespace Necromancer{
 			}
 			in.close();
 		}
-		return C;
 	}
-	std::vector <Undead> Game::ReadUndead(){
+	void Game::ReadUndead(std::string str){
 		char line[10];
 		//std::vector <Undead> u;
-		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/Undead");
+		std::ifstream in(str);//"/home/avtobus/3sem/lab2/3sem/lab4/config/Undead");
 		if (in.is_open()){
 			while(!in.eof()){
 				in.getline(line, 10);
@@ -129,21 +125,18 @@ namespace Necromancer{
 				in.getline(line, 10);
 				U.setfr(atoi(line));
 				u.push_back(U);
-				//Paste(&U, Cell);
 		}
 			in.close();
 		}
 		for (int i = 0; i<u.size(); i++){
 			Paste(&(u[i]), 3, -1, -1);
 		}
-		//set_u(u);
-		return u;
 	}
-void Game::ReadSummoner(){
+void Game::ReadSummoner(std::string str){
 		char line[10];
 		int k;
 		//std::vector <Su> p;
-		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/Prizivately");
+		std::ifstream in(str);//"/home/avtobus/3sem/lab2/3sem/lab4/config/Prizivately");
 		if (in.is_open()){
 			while(!in.eof()){
 
@@ -190,11 +183,11 @@ void Game::ReadSummoner(){
 
 		//return p;
 	}
-en<Alive> Game::ReadAlive(){
+	void Game::ReadAlive(std::string str){
 	char line[10];
 	char m[3];
 	//en<Alive>* enemy = new en;
-		std::ifstream in("/home/avtobus/3sem/lab2/3sem/lab4/config/enemies");
+		std::ifstream in(str);//"/home/avtobus/3sem/lab2/3sem/lab4/config/enemies");
 	if (in.is_open()){
 		while (!in.eof()){
 			Alive* a = new Alive;
@@ -227,9 +220,8 @@ en<Alive> Game::ReadAlive(){
 			}
 			else
 				enemy->add(*a);	*/
-			e.add(*a);
+			e.add(a);
 		}
 	}
 	in.close();
-	return e;
 }}

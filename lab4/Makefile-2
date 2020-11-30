@@ -1,4 +1,4 @@
 all:
-	g++ Test.cpp -o TEST -Llib -lgame -lgtest -lpthread -lncurses
+	g++ Test.cpp -o TEST -g -Llib -lgame -lgtest -lpthread -lncurses
 clean:
 	rm TEST

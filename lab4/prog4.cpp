@@ -2,12 +2,9 @@
 #include <ncurses.h>
 #include <cstring>
 #include <iostream>
-//std::vector <Necromancer::Undead> u;
 //const int width = 20;
 //const int height = 20;
-//Necromancer::cell Cell[width][height];
 namespace Necromancer{
-	//std::vector <Undead> u;
 	Alive::Alive(){
 		setname("");
 		setmax_hp(0);
@@ -60,6 +57,44 @@ namespace Necromancer{
 	t6.mana = 10;
 	t6.charact = 0;
 	T.push_back(t6);
+	tab t7;
+	t7.name = "spoilage";
+	t7.parent = "";
+	t7.mana= 1;
+	t7.charact = 1;
+	T.push_back(t7);
+	tab t8;
+	t8.name = "pain";
+	t8.parent = "spoilage";
+	t8.mana = 2;
+	t8.charact = 1;
+	T.push_back(t8);
+	tab t9;
+	t9.name = "agony";
+	t9.parent = "pain";
+	t9.mana =3;
+	t9.charact = 1;
+	T.push_back(t9);
+	t1.name = "exhastion";
+	t1.parent = "";
+	t1.mana = 1;
+	t1.charact = 1;
+	T.push_back(t1);
+	t2.name= "rot";
+	t2.parent = "exhastion";
+	t2.mana = 2;
+	t2.charact = 1;
+	T.push_back(t2);
+	t3.name = "desecration";
+	t3.parent = "";
+	t3.mana = 3;
+	t3.charact = 1;
+	T.push_back(t3);
+	t1.name = "madness";
+	t1.parent = "desecration";
+	t1.mana = 3;
+	t1.charact = 1;
+	T.push_back(t1);
 	return T;
 }
 	Unit::Unit(){
@@ -67,16 +102,12 @@ namespace Necromancer{
 		sety(rand()%20);
 	}
 	int Unit::hit_enem(Unit* enem){
-		if (getfr() == enem->getfr())
+		if ((getfr() == enem->getfr()) && getcond()!=2)
 			return 1;
 		enem->sethp(enem->gethp()-getdamage());
-		//exp+=1;
 		if (enem->gethp()<=0){
 			enem->sethp(0);
-			/*if (enem->getcond()!=10){
-				enem->setcond(0);
-				return 2;
-			}*/
+			setexp(getexp()+1);
 			return 0;
 		}
 		return 1;
@@ -85,16 +116,15 @@ namespace Necromancer{
 		setx(rand()%20);
 		sety(rand()%20);
 	}
-	Undead::Undead(Alive& enem, std::string c, int k){
-		setname(enem.getname());
-		setmax_hp(enem.getmax_hp());
+	Undead::Undead(Unit* enem, std::string c, int k){
+		setname(enem->getname());
+		setmax_hp(enem->getmax_hp());
 		sethp(getmax_hp());
-		setx(enem.getx());
-		sety(enem.gety());
-		setdamage((enem.getdamage()+k)/2);
-		sethit(enem.gethit());
+		setx(enem->getx());
+		sety(enem->gety());
+		setdamage((enem->getdamage()+k)/2);
 		setfr(1);
-		type = c;
+		settype(c);
 	}
 	/*Summoner::Summoner(){
 		setx(rand()%20);
@@ -151,6 +181,7 @@ namespace Necromancer{
 		setexp(0);
 		sethp(7);
 		setlevel(1);
+		setdamage(1);
 		mana = 0;
 		setfr(1);
 		setmax_hp(getlevel()*2+5);
@@ -163,167 +194,6 @@ namespace Necromancer{
 				return *iter; }
 		}
 		//return nullptr;
-	}
-		/*while (f == 0){
-			mvwprintw(stdscr, 25, 0, "Choose the curse: s - spoilage, p - pain, a - agony, r - rot\n");
-			mvwprintw(stdscr, 26, 0, "e - exhaustion, c - contagion, d - desecration, m - madness");
-			switch(getch()){
-				case 's':
-					t = find_in_table("spoilage");
-					//mvwprintw(stdscr, 27, 0, "aaaa");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.setdamage(enem.getdamage()-1);
-					if (enem.getdamage()<0)
-						enem.setdamage(0);
-					mana-=t.mana;
-					exp++;
-					return 0;
-					break;
-				case 'p':
-					t = find_in_table("pain");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.setdamage(enem.getdamage()-2);
-					if (enem.getdamage()<0)
-						enem.setdamage(0);
-					mana -=t.mana;
-					exp = exp+2;
-					return 0;
-					break;
-				case 'a':
-					t = find_in_table("agony");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.setdamage(enem.getdamage()-4);
-					if (enem.getdamage()<0)
-						enem.setdamage(0);
-					mana-=t.mana;
-					exp = exp+3;
-					return 0;
-					break;
-				case 'e':
-					t = find_in_table("exhastion");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.sethit(enem.gethit()+1);
-					mana-=t.mana;
-					exp++;
-					return 0;
-					break;
-				case 'r':
-					t = find_in_table("rot");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.sethit(enem.gethit()+3);
-					mana-=t.mana;
-					exp+=2;
-					return 0;
-					break;
-				case 'c':
-					t = find_in_table("contagion");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.sethit(enem.gethit()+1);
-					mana-=t.mana;
-					exp++;
-					return 0;
-					break;
-				case 'd':
-					t = find_in_table("desecration");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.setcond(2);
-					mana-=t.mana;
-					exp++;
-					return 0;
-					break;
-				case 'm':
-					t = find_in_table("madness");
-					if (t.charact == 0 || t.mana > mana)
-						return 0;
-					enem.setcond(2);
-					enem.setdamage(enem.getdamage()+3);
-					enem.sethit(enem.gethit()+5);
-					mana-=t.mana;
-					exp+=3;
-					return 0;
-					break;
-			}
-		}
-		return 0;
-	}*/
-	int Curse::spoilage(Unit* enem, Myself& me){
-		tab t = me.find_in_table("spoilage");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->setdamage(enem->getdamage()-1);
-		if (enem->getdamage()<0)
-			enem->setdamage(0);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+1);
-		return 0;
-	}
-	int Curse::pain(Unit* enem, Myself& me){
-		tab t = me.find_in_table("pain");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->setdamage(enem->getdamage()-2);
-		if (enem->getdamage()<0)
-			enem->setdamage(0);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+2);
-		return 0;
-	}
-	int Curse::agony(Unit* enem, Myself& me){
-		tab t = me.find_in_table("agony");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->setdamage(enem->getdamage()-4);
-		if (enem->getdamage()<0)
-			enem->setdamage(0);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+3);
-		return 0;
-	}
-	int Curse::exhastion(Unit* enem, Myself& me){
-		tab t = me.find_in_table("exhastion");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->sethp(enem->gethp()-1);
-		enem->setdamage(enem->getdamage()-1);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+1);
-		return 0;
-	}
-	int Curse::rot(Unit* enem, Myself& me){
-		tab t = me.find_in_table("rot");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->sethp(enem->gethp()-2);
-		enem->setdamage(enem->getdamage()-1);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+2);
-		return 0;
-	}
-	int Curse::desecration(Unit* enem, Myself& me){
-		tab t = me.find_in_table("desecration");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->setcond(2);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+1);
-		return 0;
-	}
-	int Curse::madness(Unit* enem, Myself& me){
-		tab t = me.find_in_table("madness");
-		if (t.charact == 0 || t.mana > me.getmana())
-			return 0;
-		enem->setcond(2);
-		enem->setdamage(enem->getdamage()+3);
-		me.setmana(me.getmana()-t.mana);
-		me.setexp(me.getexp()+3);
-		return 0;
 	}
 	Myself& Myself::increase_level(){
 		if (getexp()<5)
@@ -368,37 +238,8 @@ namespace Necromancer{
 		}
 	return *this;
 	}
-	std::vector <Undead> Myself::necromancy(Alive& enem, char c, std::vector <Undead> u, std::vector <coef> co){
-		std::string type;
-		tab t;
-		if (c == 's')
-			type = "skeleton";
-		if (c == 'g')
-			type = "ghost";
-		if (c == 'f')
-			type = "gul";
-		if (c == 'z')
-			type = "zombie";
-		t = find_in_table(type);
-		if (t.charact == 0 || (t.mana > mana)){
-					//hp-=1;
-			return u;
-		}
-		std::vector <coef> :: iterator it;
-		int k;
-		for (it = co.begin(); it<co.end(); it++){
-			if (type == it->name)
-				k = it->c;
-		}
-		mana -=t.mana;
-		Undead U(enem, type, k);	
-		u.push_back(U);
-		enem.setx(-10);
-		enem.sety(-10);
-		exp+=3;
-		//delete &enem;
-		return u;
-	}
+	//void Myself::make_available(std::string str){
+
 	int Myself::draining(Unit* enem){
 		int k;
 		for(iter=V.begin(); iter <V.end(); iter++){
