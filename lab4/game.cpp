@@ -1,11 +1,9 @@
-//#include <iostream>
 #include <ncurses.h>
 #include <iostream>
-#include "lab4.h"
-#include <string>
+#include "Cave.h"
 #include <fstream>
 #include <cstdlib>
-#include <vector>
+#include <sstream>
 using namespace Necromancer;
 const int width=20;
 const int height=20;
@@ -31,6 +29,10 @@ void Draw(Game G){
 		for (int j = 0; j<width+1; j++){
 			if (G.Cell[i][j].gettype()==1)
 				printw("#");
+			if (G.Cell[i][j].gettype()==2)
+				printw("8");
+			if (G.Cell[i][j].gettype()==-1)
+				printw("E");
 			if (G.Cell[i][j].getwho() == 0 && G.Cell[i][j].gettype()==0)
 				printw(" ");
 			if (G.Cell[i][j].getwho() ==-1)
@@ -41,7 +43,7 @@ void Draw(Game G){
 				std::string str = G.Cell[i][j].getObj()->getname();
 				printw("%c", str[0]);	
 			}
-			if (G.Cell[i][j].getwho() == 3){
+			if (G.Cell[i][j].getwho() == 3|| G.Cell[i][j].getwho()==6){
 				std::string str = G.Cell[i][j].getObj()->gettype();
 				printw("%c", str[0]);}
 			if (G.Cell[i][j].getwho() == 4){
@@ -55,7 +57,7 @@ void Draw(Game G){
 			}
 			if (G.x>j-3 && G.x<j+3 &&G.y<i+3 && G.y>i-3 && G.Cell[i][j].getwho()>1){
 				Unit* it = G.Cell[i][j].getObj();
-				printw(" %s, hp: %d, damage:%d, fraction: %d",  it->getname().c_str(), it->gethp(), it->getdamage(),it->getfr());
+				printw(" %s, hp: %d, damage:%d, fraction: %d, condition %d",  it->getname().c_str(), it->gethp(), it->getdamage(),it->getfr(), it->getcond());
 			}
 		}
 		printw("\n");
@@ -69,7 +71,12 @@ int P(int r){
 	else
 		return r-2;
 }
-void Input( Game& G){
+int Input( Game& G){
+	if (G.getgameOver()==2){
+		if(getch()=='p')
+			G.setgameOver(0);
+		return 0;
+	}
 	//if (_kbhit()){//проверка, нажата ли клавиша
 		switch(getch())// какая именно клавиша нажата
 		{
@@ -116,13 +123,26 @@ void Input( Game& G){
 					 break;
 				 }
 			case 'x':
-				G.setgameOver(true);
+				G.setgameOver(1);
+				break;
+			case 'p':
+				G.setgameOver(2);
+				break;
+			case 'o':
+				G.Open_The_Door();
 				break;
 			default:
+				int a = rand()%10000;
 				G.enemy_attack();
-				G.Summoner_attack();
+				if (a == 3)
+					G.Summoner_attack();
+				if (a == 0)
+					G.Alive_agression();
+				if (a%5000==2)
+					G.Alive_go(); 
 				break;
 		}
+		return 0;
 }/*
 int printv(Myself me){
 	std::vector <tab> T = me.getV();
@@ -143,47 +163,75 @@ int printCell(Game G){
 	}
 	return 0;
 }*/
-int main(){
-	Game G;
-	G.SetUp();
-	initscr();
-	cbreak();
-	noecho();
-	scrollok(stdscr, TRUE);
-	nodelay(stdscr, TRUE);
-	int f = 0; char a = 0; std::string str;
+int Reload(Game& G, int l){
+	std::stringstream ss;
+	ss<<l;
+	std::string s1= "/home/avtobus/3sem/lab2/3sem/lab4/config/l"+ ss.str();	
+	G.new_level();
+	G.ReadSummoner(s1+"/Summoners");
+       	G.ReadAlive(s1+"/Alive");
+	G.ReadUndead(s1+"/Undead");
+	//std::cout<<"uuun"<<std::endl;
+	//G.Readme(s1+"/Myself");
+	return 0;
+}
+int Gameload(Game& G){
 	G.ReadCoef();
+	int f=0; char a; std::string str;
 	std::string s1= "/home/avtobus/3sem/lab2/3sem/lab4/";	
-	//std::cout<<"If you want to start a new game, input 1, to resume, input 2\n";
 	while (f==0){
 		
 		mvwprintw(stdscr, 1, 1,"If you want to start a new game, input 1, to resume, input 2\n");
 		a = getch();
 		if (a == '1'){
 			f =1;
-			str= "config/";
+			str= "config/l1";
+			G.Readme(s1+str+"/Myself");
+			G.SetUp(1);
 		}
 		if (a == '2'){
 			f = 2;
-			str = "mygame/";
+			str = "mygame";
+			G.Readlevel();
+			G.Readme(s1+str+"/Myself");
+			G.SetUp(G.getlevel());
+			
 		}
 	}
-	G.ReadSummoner(s1+str+"Summoners");
-       	G.ReadAlive(s1+str+"Alive");
-	G.ReadUndead(s1+str+"Undead");
-	G.Readme(s1+str+"Myself");
-	while (G.getgameOver()!= true){
+	G.ReadSummoner(s1+str+"/Summoners");
+	//std::cout<<"aa"<<std::endl;
+       	G.ReadAlive(s1+str+"/Alive");
+	//std::cout<<"bb"<<std::endl;
+	G.ReadUndead(s1+str+"/Undead");
+	//std::cout<<"cc"<<std::endl;
+	return 0;
+}
+int main(){
+	Game G;
+	//G.SetUp();
+	initscr();
+	cbreak();
+	noecho();
+	scrollok(stdscr, TRUE);
+	nodelay(stdscr, TRUE);
+	Gameload(G);
+	while (G.getgameOver()!=1){
 		Draw(G);
 		Input(G);
+		if (G.getgameOver()==3){
+		//	std::cout<<G.getgameOver()<<std::endl;
+			Reload(G, G.getlevel()+1);
+		}		
 	}
 	endwin();
-	printv(G.getme());
+//	printv(G.getme());
 	if (G.getme().gethp()!=0){
-	G.WriteUndead();
-	G.WriteAlive();
-	G.Writeme();
-	G.WriteSummoners();}
-	//printv(me);
+//	G.WriteUndead();
+//	G.WriteAlive();
+//	G.Writeme();
+//	G.WriteSummoners();
+//	G.Writegame();
+	}
 	//printCell(G);
 	return 0;
 }

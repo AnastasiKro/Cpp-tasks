@@ -1,6 +1,5 @@
-#include "lab4.h"
+#include "Cave.h"
 #include <ncurses.h>
-#include <cstring>
 #include <iostream>
 //const int width = 20;
 //const int height = 20;
@@ -10,7 +9,11 @@ namespace Necromancer{
 		setmax_hp(0);
 		setexp(rand()%5+1);
 	}
-			
+	Alive::~Alive(){
+		while(!St.empty()){
+			St.pop();
+		}
+	}	
 	Alive::Alive(std::string str, int m, int h, int f, int ex, int c){
 		setname(str);
 		setmax_hp(m);
@@ -131,50 +134,53 @@ namespace Necromancer{
 		sety(rand()%20);
 	}*/
 	Undead* Summoner::create_slaves(){
-		Undead* U = new Undead;
+		Undead *U = new Undead;
 		U->settype(getslaves_type());
 		U->setmax_hp(rand()%5+1);
 		U->sethp(U->getmax_hp());
+		U->setdamage(rand()%3+1);
 		return U;
-		//U.setname(getname());
-		//U.setx(getx()+rand()%4+1);
-		//U.sety(gety()+rand()%4+1);
-		//U.setfr(getfr());
-		//u.push_back(U);
-		//Paste(&(u[u.size()-1]),  3, getx(), gety());
 	}
-	Unit* Summoner_Alive::Create(){
+	Undead* Summoner_Alive::Create(){
 		Undead* U = create_slaves();
 		U->setfr(getfr());
 		U->setname(getname());
+		U->setx(getx());
+		U->sety(gety());
+		return U;
+	}
+	Undead* Summoner_Undead::Create(){
+		Undead *U = create_slaves();
+		U->setfr(getfr());
+		U->setname(getname());
+		U->setx(getx());
+		U->sety(gety());
 		return U;
 		//u.push_back(U);
 		//Paste(&(u[u.size()-1], 3, Cell[i][j].getObj()->getx(), Cell[i][j].getObj()->gety()));
 	}
-	Unit* Summoner_Undead::Create(){
-		Undead* U = create_slaves();
-		U->setfr(getfr());
-		U->setname(getname());
-		return U;
-		//u.push_back(U);
-		//Paste(&(u[u.size()-1], 3, Cell[i][j].getObj()->getx(), Cell[i][j].getObj()->gety()));
-	}
-	Summoner_Alive::Summoner_Alive(std::string S, Unit P){
+	Summoner_Alive::Summoner_Alive(std::string S, Unit P, int q){
 		setslaves_type(S);
+		setq(q);
 		setmax_hp(P.getmax_hp());
 		sethp(P.gethp());
 		setfr(P.getfr());
 		setname(P.getname());
 		setdamage(P.getdamage());
+		setx(P.getx());
+		sety(P.gety());
 	}
-	Summoner_Undead::Summoner_Undead(std::string S, Unit P, std::string type){
+	Summoner_Undead::Summoner_Undead(std::string S, Unit P, std::string type, int q){
 		setslaves_type(S);
+		setq(q);
 		setmax_hp(P.getmax_hp());
 		sethp(P.gethp());
 		setfr(P.getfr());
 		setname(P.getname());
 		setdamage(P.getdamage());
 		settype(type);
+		setx(P.getx());
+		sety(P.gety());
 	}	
 		
 	Myself::Myself(){
@@ -188,6 +194,7 @@ namespace Necromancer{
 		max_mana = getlevel()*5+10;
 		V = CreateTable();
 	}
+	
 	tab Myself::find_in_table(std::string str){
 		for (iter = V.begin(); iter<V.end(); iter++){
 			if (iter->name == str){
