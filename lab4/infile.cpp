@@ -6,6 +6,7 @@ namespace Necromancer{
 	void Game::WriteUndead(){
 		std::ofstream of("/home/avtobus/3sem/lab2/3sem/lab4/mygame/Undead");
 		for (int i = 0; i<u.size(); i++){
+			if (u[i].getx()!=-10){
 			of << u[i].getname()<<std::endl;
 			of << u[i].gettype()<<std::endl;
 			of << u[i].getmax_hp()<<std::endl;
@@ -13,11 +14,11 @@ namespace Necromancer{
 			of <<u[i].getdamage()<<std::endl;
 			of<<u[i].getfr()<<std::endl;
 			of <<u[i].getx()<<std::endl;
-			of<<u[i].gety()<<std::endl;
+			of<<u[i].gety()<<std::endl;}
 		}
 		Iterator<Undead> Iter;
 		for (Iter = Un.begin(); Iter<Un.end(); Iter++){
-			if(Iter.item()->getx()!=-1){
+			if(Iter.item()->getx()!=-10){
 			of << Iter.item()->getname()<<std::endl;
 			of << Iter.item()->gettype()<<std::endl;
 			of << Iter.item()->getmax_hp()<<std::endl;
@@ -84,6 +85,7 @@ namespace Necromancer{
 			}
 		}
 		for (int i = 0; i<SU.size(); i++){
+			if (SU[i].getx()!=-10){
 			of<<SU[i].gettype()<<std::endl;
 			of<<SU[i].getname()<<std::endl;
 			of<<SU[i].getslaves_type()<<std::endl;
@@ -93,7 +95,7 @@ namespace Necromancer{
 			of<<SU[i].getdamage()<<std::endl;
 			of<<SU[i].getfr()<<std::endl;
 			of<<SU[i].getx()<<std::endl;
-			of<<SU[i].gety()<<std::endl;
+			of<<SU[i].gety()<<std::endl;}
 		}
 		of.close();
 	}

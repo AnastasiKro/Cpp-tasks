@@ -22,90 +22,14 @@ namespace Necromancer{
 		setexp(ex);
 		setcond(1);
 	}
-	std::vector <tab> CreateTable(){
-		std::vector <tab> T;
-	tab t1;
-	t1.name="draining";
-	t1.parent = "";
-	t1.mana = 0;
-	t1.charact = 1;//level of draining
-	T.push_back(t1); 
-	tab t2;
-	t2.name = "skeleton";
-	t2.parent = "";
-	t2.mana = 2;
-	t2.charact = 1;//is available
-	T.push_back(t2);
-	tab t3;
-	t3.name = "gul";
-	t3.parent = "skeleton";
-	t3.mana = 4;
-	t3.charact = 0; //is not available
-	T.push_back(t3);
-	tab t4;
-	t4.name = "ghost";
-	t4.parent = "";
-	t4.mana = 5;
-	t4.charact = 0;
-	T.push_back(t4);
-	tab t5;
-	t5.name = "phantom";
-	t4.parent = "ghost";
-	t4.mana = 7;
-	t4.charact = 0;
-	T.push_back(t5);
-	tab t6;
-	t6.name = "zombie";
-	t6.parent = "";
-	t6.mana = 10;
-	t6.charact = 0;
-	T.push_back(t6);
-	tab t7;
-	t7.name = "spoilage";
-	t7.parent = "";
-	t7.mana= 1;
-	t7.charact = 1;
-	T.push_back(t7);
-	tab t8;
-	t8.name = "pain";
-	t8.parent = "spoilage";
-	t8.mana = 2;
-	t8.charact = 1;
-	T.push_back(t8);
-	tab t9;
-	t9.name = "agony";
-	t9.parent = "pain";
-	t9.mana =3;
-	t9.charact = 1;
-	T.push_back(t9);
-	t1.name = "exhastion";
-	t1.parent = "";
-	t1.mana = 1;
-	t1.charact = 1;
-	T.push_back(t1);
-	t2.name= "rot";
-	t2.parent = "exhastion";
-	t2.mana = 2;
-	t2.charact = 1;
-	T.push_back(t2);
-	t3.name = "desecration";
-	t3.parent = "";
-	t3.mana = 3;
-	t3.charact = 1;
-	T.push_back(t3);
-	t1.name = "madness";
-	t1.parent = "desecration";
-	t1.mana = 3;
-	t1.charact = 1;
-	T.push_back(t1);
-	return T;
-}
 	Unit::Unit(){
 		setx(rand()%20);
 		sety(rand()%20);
 	}
 	int Unit::hit_enem(Unit* enem){
 		if ((getfr() == enem->getfr()) && getcond()!=2)
+			return 1;
+		if (getcond()==0)
 			return 1;
 		enem->sethp(enem->gethp()-getdamage());
 		if (enem->gethp()<=0){
@@ -129,10 +53,6 @@ namespace Necromancer{
 		setfr(1);
 		settype(c);
 	}
-	/*Summoner::Summoner(){
-		setx(rand()%20);
-		sety(rand()%20);
-	}*/
 	Undead* Summoner::create_slaves(){
 		Undead *U = new Undead;
 		U->settype(getslaves_type());
@@ -156,8 +76,6 @@ namespace Necromancer{
 		U->setx(getx());
 		U->sety(gety());
 		return U;
-		//u.push_back(U);
-		//Paste(&(u[u.size()-1], 3, Cell[i][j].getObj()->getx(), Cell[i][j].getObj()->gety()));
 	}
 	Summoner_Alive::Summoner_Alive(std::string S, Unit P, int q){
 		setslaves_type(S);
@@ -245,7 +163,6 @@ namespace Necromancer{
 		}
 	return *this;
 	}
-	//void Myself::make_available(std::string str){
 
 	int Myself::draining(Unit* enem){
 		int k;
@@ -286,4 +203,82 @@ namespace Necromancer{
 		setObj(nullptr);
 		return *this;
 	}
-}	
+		std::vector <tab> CreateTable(){
+		std::vector <tab> T;
+	tab t1;
+	t1.name="draining";
+	t1.parent = "";
+	t1.mana = 0;
+	t1.charact = 1;//level of draining
+	T.push_back(t1); 
+	tab t2;
+	t2.name = "skeleton";
+	t2.parent = "";
+	t2.mana = 2;
+	t2.charact = 1;//is available
+	T.push_back(t2);
+	tab t3;
+	t3.name = "gul";
+	t3.parent = "skeleton";
+	t3.mana = 4;
+	t3.charact = 0; //is not available
+	T.push_back(t3);
+	tab t4;
+	t4.name = "ghost";
+	t4.parent = "";
+	t4.mana = 5;
+	t4.charact = 0;
+	T.push_back(t4);
+	tab t5;
+	t5.name = "phantom";
+	t5.parent = "ghost";
+	t5.mana = 7;
+	t5.charact = 0;
+	T.push_back(t5);
+	tab t6;
+	t6.name = "zombie";
+	t6.parent = "";
+	t6.mana = 10;
+	t6.charact = 0;
+	T.push_back(t6);
+	tab t7;
+	t7.name = "spoilage";
+	t7.parent = "";
+	t7.mana= 1;
+	t7.charact = 1;
+	T.push_back(t7);
+	tab t8;
+	t8.name = "pain";
+	t8.parent = "spoilage";
+	t8.mana = 2;
+	t8.charact = 1;
+	T.push_back(t8);
+	tab t9;
+	t9.name = "agony";
+	t9.parent = "pain";
+	t9.mana =3;
+	t9.charact = 1;
+	T.push_back(t9);
+	t1.name = "exhastion";
+	t1.parent = "";
+	t1.mana = 1;
+	t1.charact = 1;
+	T.push_back(t1);
+	t2.name= "rot";
+	t2.parent = "exhastion";
+	t2.mana = 2;
+	t2.charact = 1;
+	T.push_back(t2);
+	t3.name = "desecration";
+	t3.parent = "";
+	t3.mana = 3;
+	t3.charact = 1;
+	T.push_back(t3);
+	t1.name = "madness";
+	t1.parent = "desecration";
+	t1.mana = 3;
+	t1.charact = 1;
+	T.push_back(t1);
+	return T;
+}
+}

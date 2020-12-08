@@ -33,16 +33,22 @@ namespace Necromancer{
 			Cell[k][l].setwho(-1);
 		}
 		if(Cell[k][l].getwho() == 1)
-			gameOver = true;
-		if ((Cell[k][l].getwho() == 3) || (Cell[k][l].getwho()==5)){
+			gameOver = 1;
+		if (Cell[k][l].getwho() == 3){
 			Unit* U =Cell[k][l].getObj();
-			*U = u[u.size()-1];
-			u.pop_back();
+			U->setx(-10); U->sety(-10);
+			
+			Cell[k][l].del();
+		}
+		if (Cell[k][l].getwho()==5){
+			Unit* U =Cell[k][l].getObj();
+			//Summoner_Undead* a = SU[SU.size()-1];
+			U->setx(-10); U->sety(-10);
 			Cell[k][l].del();
 		}
 		if (Cell[k][l].getwho()==6){
-				Cell[k][l].getObj()->setx(-1);
-				Cell[k][l].getObj()->sety(-1);
+				Cell[k][l].getObj()->setx(-10);
+				Cell[k][l].getObj()->sety(-10);
 				Cell[k][l].del();
 		}
 	}
@@ -103,6 +109,9 @@ namespace Necromancer{
 			case 'z':
 				type = "zombie";
 				break;
+			case 'p':
+				type = "phantom";
+				break;
 		}
 		tab t = me.find_in_table(type);
 		if (t.charact == 0 || t.mana>me.getmana())
@@ -115,10 +124,10 @@ namespace Necromancer{
 					Unit* enem = Cell[i][j].getObj();
 					enem->setcond(0);
 					int k = findc(type);
-					Undead U(enem, type, k);
-					u.push_back(U);
+					Undead* U = new Undead(enem, type, k);
+					Un.add(U);
 					Cell[i][j].setwho(3);
-					Cell[i][j].setObj(&(u[u.size()-1]));
+					Cell[i][j].setObj(U);
 				}
 			}
 		}

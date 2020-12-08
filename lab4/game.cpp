@@ -163,13 +163,25 @@ int printCell(Game G){
 	}
 	return 0;
 }*/
+int write(Game& G){
+	G.WriteUndead();
+	G.WriteAlive();
+	G.Writeme();
+	G.WriteSummoners();
+	G.Writegame();
+	return 0;
+}
 int Reload(Game& G, int l){
+	write(G);
 	std::stringstream ss;
 	ss<<l;
 	std::string s1= "/home/avtobus/3sem/lab2/3sem/lab4/config/l"+ ss.str();	
 	G.new_level();
+	///std::cout<<"l"<<std::endl;
 	G.ReadSummoner(s1+"/Summoners");
+	//std::cout<<"ss"<<std::endl;
        	G.ReadAlive(s1+"/Alive");
+	//std::cout<<"aa"<<std::endl;
 	G.ReadUndead(s1+"/Undead");
 	//std::cout<<"uuun"<<std::endl;
 	//G.Readme(s1+"/Myself");
@@ -219,18 +231,13 @@ int main(){
 		Draw(G);
 		Input(G);
 		if (G.getgameOver()==3){
-		//	std::cout<<G.getgameOver()<<std::endl;
 			Reload(G, G.getlevel()+1);
 		}		
 	}
 	endwin();
 //	printv(G.getme());
 	if (G.getme().gethp()!=0){
-//	G.WriteUndead();
-//	G.WriteAlive();
-//	G.Writeme();
-//	G.WriteSummoners();
-//	G.Writegame();
+	write(G);
 	}
 	//printCell(G);
 	return 0;
