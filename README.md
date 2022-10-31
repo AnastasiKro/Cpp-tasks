@@ -1,2 +1,1 @@
-# 3sem
-my labs on c++
+# Studiing OOP with C++
